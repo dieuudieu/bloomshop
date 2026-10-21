@@ -22,3 +22,4 @@ Quản lý đơn hàng(Sửa trạng thái đơn hàng)
 Quản lý doanh thu
 	Doanh thu(tuần, tháng, năm)
 	Sản phẩm(bán chạy nhất, ế nhất)
+Phân trang.
