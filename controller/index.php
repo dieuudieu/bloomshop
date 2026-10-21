@@ -213,7 +213,61 @@ switch ($act) {
         }
         break;
     case 'sanpham':
-        $sanpham = $data->readitem("SELECT * FROM sanpham ORDER BY id DESC");
+
+        // 1. Lấy dữ liệu tìm kiếm từ URL
+        $keyword = trim($_GET['keyword'] ?? '');
+        $id_dm = (int) ($_GET['id_dm'] ?? 0);
+        $page = (int) ($_GET['page'] ?? 1);
+
+        if ($page < 1) {
+            $page = 1;
+        }
+
+        // 2. Lấy danh sách danh mục cho bộ lọc
+        $danhmuc = $data->readitem("SELECT * FROM danhmuc");
+
+        // 3. Tạo câu SQL tìm kiếm sản phẩm
+        $sql = "SELECT * FROM sanpham WHERE 1=1";
+        $params = [];
+
+        // Tìm theo tên
+        if ($keyword != '') {
+            $sql .= " AND name LIKE :keyword";
+            $params[':keyword'] = "%" . $keyword . "%";
+        }
+
+        // Lọc theo danh mục
+        if ($id_dm > 0) {
+            $sql .= " AND id_dm = :id_dm";
+            $params[':id_dm'] = $id_dm;
+        }
+
+        // 4. Đếm số sản phẩm tìm được
+        $sqlCount = str_replace(
+            "SELECT *",
+            "SELECT COUNT(*) AS tong",
+            $sql
+        );
+
+        $ketqua = $data->readitem($sqlCount, $params);
+        $tongSanPham = (int) $ketqua[0]['tong'];
+
+        // 5. Tính số trang
+        $limit = 9;
+        $tongTrang = (int) ceil($tongSanPham / $limit);
+
+        if ($tongTrang > 0 && $page > $tongTrang) {
+            $page = $tongTrang;
+        }
+
+        $offset = ($page - 1) * $limit;
+
+        // 6. Lấy sản phẩm thuộc trang hiện tại
+        $sql .= " ORDER BY id DESC LIMIT $limit OFFSET $offset";
+
+        $sanpham = $data->readitem($sql, $params);
+
+        // 7. Hiển thị giao diện
         include "../view/dssanpham.php";
         break;
     default:

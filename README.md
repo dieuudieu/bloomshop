@@ -1,5 +1,5 @@
 USER
-tìm kiếm
+
 bình luận đánh giá sản phẩm
 mua hàng
 giỏ hàng, thanh toán, áp voucher
@@ -22,4 +22,3 @@ Quản lý đơn hàng(Sửa trạng thái đơn hàng)
 Quản lý doanh thu
 	Doanh thu(tuần, tháng, năm)
 	Sản phẩm(bán chạy nhất, ế nhất)
-Phân trang.
