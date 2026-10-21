@@ -1,0 +1,127 @@
+/* 1. CSS CHUNG */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+}
+
+/* 2. TOP BAR */
+.top-bar {
+    background-color: #f5efe8;
+    color: #71594a;
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+}
+
+/* 3. NAVBAR */
+.navbar {
+    padding: 20px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+.navbar-brand {
+    font-size: 28px;
+    font-weight: bold;
+    color: #674a3d;
+}
+.navbar-brand span {
+    color: #c98d8d;
+}
+.navbar-nav {
+    gap: 25px;
+}
+.navbar-nav .nav-link {
+    color: #604b41;
+    font-size: 15px;
+    font-weight: 500;
+}
+.navbar-nav .nav-link:hover {
+    color: #c98d8d;
+}
+
+/* 4. HERO */
+.hero-section {
+    background-color: #f9f2ec;
+    padding: 80px 0;
+}
+.hero-content {
+    padding-right: 30px;
+}
+.hero-subtitle {
+    color: #bd8a78;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+.hero-title {
+    color: #604b41;
+    font-size: 48px;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 25px;
+}
+.hero-description {
+    color: #777777;
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+.hero-button, .btn-bloom {
+    background-color: #a87768;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 0;
+}
+.hero-button:hover, .btn-bloom:hover {
+    background-color: #81594e;
+    color: white;
+}
+.hero-image img {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* 5. SẢN PHẨM */
+.product-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+.product-card {
+    transition: 0.3s;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+}
+.price-text {
+    color: #a87768;
+}
+
+/* 6. FORM VÀ FOOTER */
+.auth-form, .form-page {
+    max-width: 620px;
+}
+.site-footer {
+    background-color: #f5efe8;
+    color: #71594a;
+}
+
+/* 7. ĐIỆN THOẠI */
+@media (max-width: 767px) {
+    .hero-section {
+        padding: 40px 0;
+    }
+    .hero-content {
+        padding-right: 0;
+        margin-bottom: 30px;
+    }
+    .hero-title {
+        font-size: 32px;
+    }
+    .hero-image img {
+        height: 300px;
+    }
+}
