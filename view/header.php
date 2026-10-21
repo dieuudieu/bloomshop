@@ -18,6 +18,22 @@
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item"><a class="nav-link" href="index.php?act=trangchu">Trang chủ</a></li>
                 <li class="nav-item"><a class="nav-link" href="index.php?act=sanpham">Sản phẩm</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="index.php?act=giohang">
+
+                        <i class="bi bi-cart3"></i>
+                        Giỏ hàng
+
+                        <?php
+                        $soLuongGio = array_sum($_SESSION['giohang'] ?? []);
+                        ?>
+
+                        <span class="badge bg-danger">
+                            <?= $soLuongGio ?>
+                        </span>
+
+                    </a>
+                </li>
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') { ?>
                     <li class="nav-item"><a class="nav-link" href="index.php?act=danhmuc">Quản lý danh mục</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.php?act=quanlysp">Quản lý sản phẩm</a></li>

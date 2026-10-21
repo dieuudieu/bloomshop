@@ -166,6 +166,11 @@ if ($act == 'xoasp' && isset($_POST['xoa'])) {
     exit;
 }
 
+// Xử lý các thao tác giỏ hàng
+if ($act == 'giohang') {
+    include "giohang.php";
+}
+
 include "../view/header.php";
 if ($loi != '') {
     echo '<div class="container mt-3 alert alert-danger">' . htmlspecialchars($loi) . '</div>';
@@ -269,6 +274,35 @@ switch ($act) {
 
         // 7. Hiển thị giao diện
         include "../view/dssanpham.php";
+        break;
+    case 'giohang':
+        
+        $giohang = [];
+        $tongTien = 0;
+
+        foreach ($_SESSION['giohang'] as $id => $soluong) {
+
+            $ds = $data->readitem(
+                "SELECT * FROM sanpham WHERE id = :id",
+                [':id' => $id]
+            );
+
+            if (count($ds) > 0) {
+
+                $sp = $ds[0];
+                $sp['soluong'] = $soluong;
+                $sp['thanhtien'] = $sp['price'] * $soluong;
+
+                $giohang[] = $sp;
+                $tongTien += $sp['thanhtien'];
+
+            } else {
+                // Sản phẩm đã bị xóa khỏi database
+                unset($_SESSION['giohang'][$id]);
+            }
+        }
+
+        include "../view/giohang.php";
         break;
     default:
         $sanpham = $data->readitem("SELECT * FROM sanpham ORDER BY id DESC");
