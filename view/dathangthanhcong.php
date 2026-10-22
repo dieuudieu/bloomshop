@@ -37,7 +37,7 @@
             <a href="index.php?act=theodoigiaohang&id=<?= $order['id'] ?>" class="btn btn-bloom px-3">
                 <i class="bi bi-truck me-1"></i> Theo dõi quá trình giao hàng
             </a>
-            <a href="/bloomshop/invoices/hoa_don_<?= $order['id'] ?>.html" target="_blank" class="btn btn-outline-primary px-3">
+            <a href="index.php?act=inhoadon&id=<?= $order['id'] ?>" target="_blank" class="btn btn-outline-primary px-3">
                 <i class="bi bi-file-earmark-text me-1"></i> Xem hóa đơn điện tử
             </a>
             <a href="index.php?act=lichsudonhang" class="btn btn-outline-secondary px-3">

@@ -4,7 +4,38 @@ Dự án website bán hoa tươi trực tuyến được xây dựng bằng **PH
 
 ---
 
-## 🌸 Danh Sách Tính Năng Hoàn Chỉnh
+## 📁 Cấu Trúc Mã Nguồn (Mô Hình MVC Thuần PHP)
+
+```
+bloomshop/
+├── index.php                         # Điều hướng người dùng vào controller/index.php
+├── bloomshop.sql                     # Kịch bản cơ sở dữ liệu mẫu hoàn chỉnh
+│
+├── controller/                       # TẦNG ĐIỀU HƯỚNG & XỬ LÝ NGHIỆP VỤ (CONTROLLER)
+│   ├── index.php                     # Bộ điều hướng trung tâm (Router) siêu gọn (~65 dòng)
+│   ├── c_taikhoan.php                # Xử lý Đăng ký, Đăng nhập, Đăng xuất
+│   ├── c_sanpham.php                 # Xử lý Trang chủ, Tìm kiếm, Phân trang, Chi tiết & Đánh giá
+│   ├── c_giohang.php                 # Xử lý Giỏ hàng, Áp Voucher, Thanh toán & Gửi hóa đơn Mail
+│   ├── c_donhang.php                 # Xử lý Lịch sử đơn hàng, Tiến trình giao hàng (Tracking) & Hủy đơn
+│   └── c_quantri.php                 # Xử lý Quản trị: Đơn hàng, Voucher, Sale, Đánh giá, Khách hàng, Nhân viên, Doanh thu
+│
+├── model/                            # TẦNG DỮ LIỆU & TIỆN ÍCH (MODEL)
+│   ├── database.php                  # Kết nối PDO & Cơ chế tự động khởi tạo / nâng cấp bảng (Auto-Migration)
+│   ├── xl_database.php               # Các hàm truy vấn, lấy ID, tự động tính hạng thành viên VIP
+│   └── mailer.php                    # Trình tạo & gửi hóa đơn điện tử HTML qua Email
+│
+├── view/                             # TẦNG GIAO DIỆN (VIEW & BOOTSTRAP 5)
+│   ├── css/style.css                 # Giao diện hoa tươi, stepper tracking, biểu đồ doanh thu thuần CSS
+│   ├── header.php, footer.php        # Header & Footer dùng chung
+│   ├── dangnhap.php, dangky.php      # Giao diện tài khoản
+│   ├── giohang.php, thanhtoan.php    # Giỏ hàng & Thanh toán
+│   ├── chitietsp.php, dssanpham.php  # Chi tiết hoa & Danh sách sản phẩm
+│   ├── lichsudonhang.php             # Lịch sử đơn hàng của người mua
+│   ├── theodoigiaohang.php           # Quá trình giao hàng 5 bước
+│   ├── tracuudonhang.php             # Tra cứu đơn hàng nhanh
+│   ├── hoadon.php                    # Giao diện hóa đơn bán hàng & in ấn chuẩn MVC
+│   └── admin_*.php                   # Toàn bộ màn hình quản trị của Admin & Staff
+```
 
 ### 1. Phía Khách Hàng (USER)
 - **Tìm kiếm & Phân trang**:

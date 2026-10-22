@@ -90,6 +90,10 @@
                                                     <i class="bi bi-x-circle"></i> Hủy
                                                 </button>
                                             </form>
+                                        <?php } elseif (in_array($st, ['xac_nhan', 'dang_giao'])) { ?>
+                                            <span class="badge bg-light text-muted border small d-inline-flex align-items-center" title="Đơn đã được xác nhận/đang giao hoa, không thể tự hủy trên web">
+                                                <i class="bi bi-lock-fill me-1"></i> Không thể hủy
+                                            </span>
                                         <?php } ?>
                                     </div>
                                 </td>

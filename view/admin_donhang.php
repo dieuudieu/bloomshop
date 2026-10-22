@@ -25,15 +25,18 @@
         </form>
     </div>
 
-    <!-- Thanh chuyển tiếp nhanh gợi ý -->
-    <div class="card border-0 shadow-sm p-3 mb-4 bg-light rounded-3">
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 small">
-            <span class="fw-bold text-secondary">Quy trình xử lý chuẩn:</span>
+    <!-- Thanh chuyển tiếp nhanh & Quy tắc vận hành một chiều -->
+    <div class="card border-0 shadow-sm p-3 mb-4 bg-light rounded-3 border-start border-4 border-primary">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 small mb-2">
+            <span class="fw-bold text-dark"><i class="bi bi-arrow-right-circle-fill text-primary me-1"></i> Quy trình giao hàng chuẩn:</span>
             <span class="badge bg-warning text-dark">1. Chờ xác nhận</span> &rarr;
-            <span class="badge bg-info text-dark">2. Xác nhận đơn</span> &rarr;
-            <span class="badge bg-primary">3. Đang giao</span> &rarr;
-            <span class="badge bg-info text-white">4. Đã giao</span> &rarr;
-            <span class="badge bg-success">5. Thành công (Tích điểm VIP)</span>
+            <span class="badge bg-info text-dark">2. Xác nhận đơn hàng</span> &rarr;
+            <span class="badge bg-primary">3. Đang giao hàng</span> &rarr;
+            <span class="badge bg-info text-white">4. Đã giao hàng</span> &rarr;
+            <span class="badge bg-success">5. Hoàn tất thành công (Tích lũy VIP)</span>
+        </div>
+        <div class="small text-danger">
+            <i class="bi bi-shield-exclamation me-1"></i> <strong>Quy tắc TMĐT một chiều:</strong> Đơn đã sang bước <em>Xác nhận</em> hoặc <em>Đang giao</em> thì <strong>không thể quay lại quy trình trước</strong> để bảo đảm toàn vẹn giao nhận hoa tươi.
         </div>
     </div>
 
@@ -84,20 +87,48 @@
                                 <span class="badge <?= $badge ?> px-2 py-1"><?= $txt ?></span>
                             </td>
                             <td>
-                                <form method="POST" action="index.php?act=doitrangthaidonhang" class="d-flex gap-1 align-items-center">
-                                    <input type="hidden" name="order_id" value="<?= $dh['id'] ?>">
-                                    <select name="new_status" class="form-select form-select-sm" style="font-size: 13px;">
-                                        <option value="cho_xac_nhan" <?= ($st == 'cho_xac_nhan') ? 'selected' : '' ?>>Chờ xác nhận</option>
-                                        <option value="xac_nhan" <?= ($st == 'xac_nhan') ? 'selected' : '' ?>>Xác nhận đơn hàng</option>
-                                        <option value="dang_giao" <?= ($st == 'dang_giao') ? 'selected' : '' ?>>Đang giao</option>
-                                        <option value="da_giao" <?= ($st == 'da_giao') ? 'selected' : '' ?>>Đã giao</option>
-                                        <option value="thanh_cong" <?= ($st == 'thanh_cong') ? 'selected' : '' ?>>Thành công</option>
-                                        <option value="da_huy" <?= ($st == 'da_huy') ? 'selected' : '' ?>>Đã hủy</option>
-                                    </select>
-                                    <button type="submit" name="capnhat_tt" class="btn btn-outline-primary btn-sm" title="Lưu trạng thái">
-                                        Lưu
-                                    </button>
-                                </form>
+                                <?php 
+                                    // Xác định các bước tiếp theo hợp lệ theo chuẩn giao hàng TMĐT một chiều:
+                                    $next_steps = [];
+                                    if ($st == 'cho_xac_nhan') {
+                                        $next_steps = [
+                                            'xac_nhan' => '👉 Xác nhận đơn hàng',
+                                            'da_huy'   => '❌ Hủy đơn hàng'
+                                        ];
+                                    } elseif ($st == 'xac_nhan') {
+                                        $next_steps = [
+                                            'dang_giao' => '🚚 Bắt đầu giao (Đang giao)',
+                                            'da_huy'    => '❌ Hủy đơn hàng'
+                                        ];
+                                    } elseif ($st == 'dang_giao') {
+                                        $next_steps = [
+                                            'da_giao' => '📦 Đã giao hàng thành công',
+                                            'da_huy'  => '❌ Giao thất bại / Hủy đơn'
+                                        ];
+                                    } elseif ($st == 'da_giao') {
+                                        $next_steps = [
+                                            'thanh_cong' => '🎉 Xác nhận Thành công (Chốt đơn)'
+                                        ];
+                                    }
+                                ?>
+                                <?php if (!empty($next_steps)) { ?>
+                                    <form method="POST" action="index.php?act=doitrangthaidonhang" class="d-flex gap-1 align-items-center">
+                                        <input type="hidden" name="order_id" value="<?= $dh['id'] ?>">
+                                        <select name="new_status" class="form-select form-select-sm" style="font-size: 13px;" required>
+                                            <option value="" disabled selected>-- Chọn bước tiếp --</option>
+                                            <?php foreach ($next_steps as $val => $text) { ?>
+                                                <option value="<?= $val ?>"><?= $text ?></option>
+                                            <?php } ?>
+                                        </select>
+                                        <button type="submit" name="capnhat_tt" class="btn btn-outline-primary btn-sm" title="Lưu chuyển tiếp trạng thái">
+                                            Lưu
+                                        </button>
+                                    </form>
+                                <?php } elseif ($st == 'thanh_cong') { ?>
+                                    <span class="badge bg-success py-1 px-2"><i class="bi bi-check-all"></i> Đã hoàn tất (Khóa)</span>
+                                <?php } elseif ($st == 'da_huy') { ?>
+                                    <span class="badge bg-danger py-1 px-2"><i class="bi bi-x-circle"></i> Đã đóng hủy (Khóa)</span>
+                                <?php } ?>
                             </td>
                             <td class="text-center">
                                 <div class="d-flex gap-1 justify-content-center">
@@ -107,7 +138,7 @@
                                     <a href="index.php?act=theodoigiaohang&id=<?= $dh['id'] ?>" class="btn btn-outline-info btn-sm" title="Xem hành trình">
                                         <i class="bi bi-geo-alt"></i>
                                     </a>
-                                    <a href="/bloomshop/invoices/hoa_don_<?= $dh['id'] ?>.html" target="_blank" class="btn btn-outline-success btn-sm" title="In / Xem hóa đơn">
+                                    <a href="index.php?act=inhoadon&id=<?= $dh['id'] ?>" target="_blank" class="btn btn-outline-success btn-sm" title="In / Xem hóa đơn">
                                         <i class="bi bi-file-earmark-text"></i>
                                     </a>
                                 </div>

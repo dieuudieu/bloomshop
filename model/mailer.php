@@ -1,45 +1,125 @@
 <?php
-// model/mailer.php - Hỗ trợ xuất và gửi email hóa đơn đơn hàng
+// model/mailer.php - Gửi email hóa đơn tự động bằng thư viện PHPMailer (theo mẫu d:\guiemail.php)
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+// Nạp các file thư viện PHPMailer từ D:\PHPMailer hoặc model/PHPMailer
+if (file_exists(__DIR__ . '/PHPMailer/src/PHPMailer.php')) {
+    require_once __DIR__ . '/PHPMailer/src/Exception.php';
+    require_once __DIR__ . '/PHPMailer/src/PHPMailer.php';
+    require_once __DIR__ . '/PHPMailer/src/SMTP.php';
+} elseif (file_exists('d:/PHPMailer/src/PHPMailer.php')) {
+    require_once 'd:/PHPMailer/src/Exception.php';
+    require_once 'd:/PHPMailer/src/PHPMailer.php';
+    require_once 'd:/PHPMailer/src/SMTP.php';
+}
+
+// ==============================================================================
+// ⚙️ CẤU HÌNH GMAIL GỬI HÓA ĐƠN TỰ ĐỘNG (BẠN ĐIỀN THÔNG TIN TẠI ĐÂY)
+// ==============================================================================
+
+// 1. Điền địa chỉ Gmail của bạn vào đây (người gửi hóa đơn):
+if (!defined('SMTP_USER')) define('SMTP_USER', 'email_cua_cac_ban@gmail.com');
+
+// 2. Điền Mật khẩu ứng dụng Google (App Password - 16 ký tự tạo trong tài khoản Google):
+//    Ví dụ: 'abcd efgh ijkl mnop'
+if (!defined('SMTP_PASS')) define('SMTP_PASS', 'app_password_16_ky_tu');
+
+// 3. Tên cửa hàng hiển thị trong hộp thư người nhận:
+if (!defined('SMTP_FROM_NAME')) define('SMTP_FROM_NAME', 'BloomShop Flowers');
+
+// 4. Email Admin nhận thông báo mỗi khi có đơn hàng mới:
+if (!defined('ADMIN_EMAIL')) define('ADMIN_EMAIL', 'admin@bloomshop.vn');
+
+// ==============================================================================
 
 class Mailer
 {
+    /**
+     * Gửi hóa đơn đơn hàng tự động đến Khách hàng và Quản trị viên bằng PHPMailer
+     */
     public static function send_order_invoice($order, $items)
     {
-        $admin_email = 'admin@bloomshop.vn';
         $order_id = $order['id'];
-        $subject = "[BloomShop] Hóa đơn xác nhận đơn hàng #$order_id";
+        $subject = "Hóa đơn xác nhận đơn hàng #$order_id - BloomShop";
 
-        // Tạo nội dung HTML hóa đơn
+        // Tạo nội dung bảng HTML chi tiết hóa đơn
         $html = self::generate_invoice_html($order, $items);
 
-        // Lưu bản sao hóa đơn HTML vào thư mục invoices để xem trực tiếp / in ấn
-        $invoice_dir = __DIR__ . '/../invoices';
-        if (!is_dir($invoice_dir)) {
-            @mkdir($invoice_dir, 0777, true);
-        }
-        $invoice_file = $invoice_dir . "/hoa_don_{$order_id}.html";
-        @file_put_contents($invoice_file, $html);
-
-        // Thiết lập header gửi mail HTML tiếng Việt
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-        $headers .= "From: BloomShop <noreply@bloomshop.vn>\r\n";
-        $headers .= "Reply-To: noreply@bloomshop.vn\r\n";
-
-        // Gửi mail cho Admin và Khách hàng (sử dụng @ để không crash nếu localhost XAMPP chưa cấu hình sendmail)
-        $sent_admin = @mail($admin_email, $subject . " (Thông báo cho Quản trị viên)", $html, $headers);
         $sent_customer = false;
-        if (!empty($order['customer_email'])) {
-            $sent_customer = @mail($order['customer_email'], $subject, $html, $headers);
+        $sent_admin = false;
+
+        // Kiểm tra xem đã điền Gmail và Mật khẩu ứng dụng thật chưa
+        $is_configured = (SMTP_USER !== 'email_cua_cac_ban@gmail.com' && SMTP_PASS !== 'app_password_16_ky_tu');
+
+        if ($is_configured && class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+            try {
+                // 1. Gửi email hóa đơn đến người mua hàng
+                if (!empty($order['customer_email'])) {
+                    $mail = new PHPMailer(true);
+                    $mail->SMTPDebug = SMTP::DEBUG_OFF;
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com';
+                    $mail->SMTPAuth = true;
+                    $mail->Username = SMTP_USER;
+                    $mail->Password = str_replace(' ', '', SMTP_PASS);
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port = 587;
+                    $mail->CharSet = 'UTF-8';
+
+                    $mail->setFrom(SMTP_USER, SMTP_FROM_NAME);
+                    $mail->addAddress($order['customer_email'], $order['customer_name']);
+
+                    $mail->isHTML(true);
+                    $mail->Subject = $subject;
+                    $mail->Body = $html;
+                    $mail->AltBody = 'Cảm ơn quý khách đã đặt hàng tại BloomShop. Đơn hàng #' . $order_id . ' đã được ghi nhận.';
+                    
+                    $mail->send();
+                    $sent_customer = true;
+                }
+
+                // 2. Gửi email thông báo đơn hàng mới đến Admin
+                if (!empty(ADMIN_EMAIL) && ADMIN_EMAIL !== $order['customer_email']) {
+                    $mail_admin = new PHPMailer(true);
+                    $mail_admin->SMTPDebug = SMTP::DEBUG_OFF;
+                    $mail_admin->isSMTP();
+                    $mail_admin->Host = 'smtp.gmail.com';
+                    $mail_admin->SMTPAuth = true;
+                    $mail_admin->Username = SMTP_USER;
+                    $mail_admin->Password = str_replace(' ', '', SMTP_PASS);
+                    $mail_admin->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail_admin->Port = 587;
+                    $mail_admin->CharSet = 'UTF-8';
+
+                    $mail_admin->setFrom(SMTP_USER, SMTP_FROM_NAME);
+                    $mail_admin->addAddress(ADMIN_EMAIL, 'Quản Trị Viên BloomShop');
+
+                    $mail_admin->isHTML(true);
+                    $mail_admin->Subject = "[Thông báo đơn mới] Đơn hàng #$order_id";
+                    $mail_admin->Body = $html;
+
+                    $mail_admin->send();
+                    $sent_admin = true;
+                }
+            } catch (Exception $e) {
+                // Ghi log lỗi nếu có trục trặc mạng để không làm gián đoạn việc mua hàng
+                error_log("PHPMailer Send Error: " . $e->getMessage());
+            }
         }
 
         return [
-            'sent_admin' => $sent_admin,
             'sent_customer' => $sent_customer,
-            'invoice_file' => "invoices/hoa_don_{$order_id}.html"
+            'sent_admin'    => $sent_admin,
+            'is_configured' => $is_configured
         ];
     }
 
+    /**
+     * Tạo mã HTML bảng hóa đơn gửi qua email
+     */
     public static function generate_invoice_html($order, $items)
     {
         $items_html = '';

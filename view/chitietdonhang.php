@@ -15,7 +15,7 @@
             <a href="index.php?act=theodoigiaohang&id=<?= $order['id'] ?>" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-truck"></i> Tiến trình giao
             </a>
-            <a href="/bloomshop/invoices/hoa_don_<?= $order['id'] ?>.html" target="_blank" class="btn btn-bloom-outline btn-sm">
+            <a href="index.php?act=inhoadon&id=<?= $order['id'] ?>" target="_blank" class="btn btn-bloom-outline btn-sm">
                 <i class="bi bi-printer"></i> In hóa đơn
             </a>
         </div>
@@ -121,6 +121,10 @@
                     <i class="bi bi-x-circle me-1"></i> Hủy đơn hàng ngay
                 </button>
             </form>
+        </div>
+    <?php } elseif (in_array($order['status'], ['xac_nhan', 'dang_giao'])) { ?>
+        <div class="card border-0 shadow-sm p-3 bg-light rounded-3 text-center small text-muted">
+            <i class="bi bi-info-circle text-primary me-1"></i> Đơn hàng đã được xác nhận / đang chuẩn bị hoa và giao hàng. Theo quy định thương mại điện tử, bạn không thể tự hủy đơn trên hệ thống. Nếu có nhu cầu thay đổi, vui lòng liên hệ <strong>Hotline: 0901.234.567</strong>.
         </div>
     <?php } ?>
 </div>
