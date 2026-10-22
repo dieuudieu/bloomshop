@@ -6,6 +6,15 @@ if ($act == 'huydonhang' && isset($_POST['huydonhang'])) {
     $order_id = (int)$_POST['order_id'];
     $order = $data->readsingle("SELECT * FROM donhang WHERE id = :id", [':id' => $order_id]);
 
+    $is_admin = isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'staff']);
+
+    // Bảo mật: Khách hàng chỉ được phép hủy đơn hàng của chính mình
+    if (!$is_admin && (!isset($_SESSION['id']) || empty($order['user_id']) || $order['user_id'] != $_SESSION['id'])) {
+        $_SESSION['flash_error'] = "Bạn không có quyền thao tác trên đơn hàng này.";
+        header("Location: index.php?act=lichsudonhang");
+        exit;
+    }
+
     if ($order && $order['status'] == 'cho_xac_nhan') {
         $data->execute_item("UPDATE donhang SET status = 'da_huy' WHERE id = :id", [':id' => $order_id]);
         
@@ -61,6 +70,13 @@ if ($act == 'inhoadon') {
     $id = (int)($_GET['id'] ?? 0);
     $order = $data->readsingle("SELECT * FROM donhang WHERE id = :id", [':id' => $id]);
     if ($order) {
+        $is_admin = isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'staff']);
+        if (!$is_admin && !empty($order['user_id'])) {
+            if (!isset($_SESSION['id']) || $_SESSION['id'] != $order['user_id']) {
+                header("Location: index.php?act=trangchu");
+                exit;
+            }
+        }
         $order_items = $data->readitem("SELECT * FROM chitiet_donhang WHERE order_id = :id", [':id' => $id]);
         include "../view/hoadon.php";
         exit;
@@ -88,6 +104,16 @@ if ($act == 'chitietdonhang') {
         header("Location: index.php?act=trangchu");
         exit;
     }
+
+    $is_admin = isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'staff']);
+    if (!$is_admin && !empty($order['user_id'])) {
+        if (!isset($_SESSION['id']) || $_SESSION['id'] != $order['user_id']) {
+            $_SESSION['flash_error'] = "Bạn không có quyền xem thông tin đơn hàng này.";
+            header("Location: index.php?act=lichsudonhang");
+            exit;
+        }
+    }
+
     $order_items = $data->readitem("SELECT * FROM chitiet_donhang WHERE order_id = :id", [':id' => $id]);
     hien_thi_view('chitietdonhang.php', [
         'order' => $order,

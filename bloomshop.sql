@@ -124,14 +124,14 @@ INSERT INTO `danhmuc` (`id`, `name`) VALUES
 (4, 'Hoa Bó Mix Nghệ Thuật')
 ON DUPLICATE KEY UPDATE `name`=VALUES(`name`);
 
--- 2. Tài khoản mẫu (Mật khẩu admin: admin123, còn lại: 123456)
+-- 2. Tài khoản mẫu (Admin: admin123 | Staff: staff123 | Khách hàng: 123456)
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `phone`, `address`, `role`, `status`, `tier`, `total_spent`) VALUES
-(1, 'Quản Trị Viên', 'admin@bloomshop.vn', '$2y$10$4c5ksuH0Mx04P/NbFrmluuySD.jY9vQUxjX.A/XnoMxltQRGJNpiy', '0901234567', 'Tòa nhà Bloom, Quận 1, TP.HCM', 'admin', 1, 'diamond', 15000000.00),
-(2, 'Nguyễn Văn Nhân Viên', 'staff@bloomshop.vn', '$2y$10$VSzuvmA3eahqm79HxWyG3eK45BX0l8lcMTi7QjQTjIf6upbZ66QMW', '0909888777', 'BloomShop Chi nhánh 1', 'staff', 1, 'silver', 0.00),
-(3, 'Lê Thị Kim Cương', 'diamond@bloomshop.vn', '$2y$10$VSzuvmA3eahqm79HxWyG3eK45BX0l8lcMTi7QjQTjIf6upbZ66QMW', '0912345678', '123 Lê Duẩn, Quận 1, TP.HCM', 'user', 1, 'diamond', 6800000.00),
-(4, 'Trần Hoàng Vàng', 'gold@bloomshop.vn', '$2y$10$VSzuvmA3eahqm79HxWyG3eK45BX0l8lcMTi7QjQTjIf6upbZ66QMW', '0987654321', '456 Nguyễn Thị Minh Khai, Quận 3', 'user', 1, 'gold', 2900000.00),
-(5, 'Phạm Ngọc Bạc', 'silver@bloomshop.vn', '$2y$10$VSzuvmA3eahqm79HxWyG3eK45BX0l8lcMTi7QjQTjIf6upbZ66QMW', '0933221100', '789 CMT8, Tân Bình, TP.HCM', 'user', 1, 'silver', 550000.00)
-ON DUPLICATE KEY UPDATE `email`=VALUES(`email`);
+(1, 'Quản Trị Viên', 'admin@bloomshop.vn', '$2y$10$KAxIU4DnpqSNYGo61P9.POnusepGginOJHjlem9Dkjze2Qe.sg9pS', '0901234567', 'Tòa nhà Bloom, Quận 1, TP.HCM', 'admin', 1, 'diamond', 15000000.00),
+(2, 'Nguyễn Văn Nhân Viên', 'staff@bloomshop.vn', '$2y$10$1zwom.nZS681rIEeglmFc.PrUkoZt1cZjH5M35pGnFsuAWrFD6Idq', '0909888777', 'BloomShop Chi nhánh 1', 'staff', 1, 'silver', 0.00),
+(3, 'Lê Thị Kim Cương', 'diamond@bloomshop.vn', '$2y$10$z1KeoyWrs.dfa2k..ghNHu23LXrIz.g23ts3fIExZyOQoOjY3Atfe', '0912345678', '123 Lê Duẩn, Quận 1, TP.HCM', 'user', 1, 'diamond', 6800000.00),
+(4, 'Trần Hoàng Vàng', 'gold@bloomshop.vn', '$2y$10$z1KeoyWrs.dfa2k..ghNHu23LXrIz.g23ts3fIExZyOQoOjY3Atfe', '0987654321', '456 Nguyễn Thị Minh Khai, Quận 3', 'user', 1, 'gold', 2900000.00),
+(5, 'Phạm Ngọc Bạc', 'silver@bloomshop.vn', '$2y$10$z1KeoyWrs.dfa2k..ghNHu23LXrIz.g23ts3fIExZyOQoOjY3Atfe', '0933221100', '789 CMT8, Tân Bình, TP.HCM', 'user', 1, 'silver', 550000.00)
+ON DUPLICATE KEY UPDATE `password`=VALUES(`password`), `role`=VALUES(`role`), `status`=1;
 
 -- 3. Sản phẩm mẫu
 INSERT INTO `sanpham` (`id`, `name`, `price`, `sale_price`, `is_sale`, `image`, `description`, `id_dm`) VALUES
@@ -151,11 +151,11 @@ ON DUPLICATE KEY UPDATE `name`=VALUES(`name`);
 
 -- 4. Mã giảm giá (Voucher)
 INSERT INTO `vouchers` (`id`, `code`, `discount_type`, `discount_value`, `min_order_value`, `quantity`, `used_count`, `expiry_date`, `status`) VALUES
-(1, 'BLOOM10', 'percent', 10.00, 200000.00, 50, 4, '2026-12-31', 1),
+(1, 'BLOOM10', 'percent', 10.00, 200000.00, 100, 4, '2026-12-31', 1),
 (2, 'GIAM50K', 'fixed', 50000.00, 300000.00, 100, 12, '2026-12-31', 1),
-(3, 'VIPMEMBER', 'fixed', 100000.00, 600000.00, 30, 2, '2026-12-31', 1),
+(3, 'VIPMEMBER', 'fixed', 100000.00, 600000.00, 50, 2, '2026-12-31', 1),
 (4, 'FREESHIP', 'fixed', 30000.00, 150000.00, 200, 25, '2026-12-31', 1)
-ON DUPLICATE KEY UPDATE `code`=VALUES(`code`);
+ON DUPLICATE KEY UPDATE `status`=1, `expiry_date`='2026-12-31', `discount_value`=VALUES(`discount_value`), `min_order_value`=VALUES(`min_order_value`);
 
 -- 5. Đánh giá mẫu
 INSERT INTO `danhgia` (`id`, `product_id`, `user_id`, `user_name`, `rating`, `content`, `status`, `created_at`) VALUES

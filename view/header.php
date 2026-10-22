@@ -45,7 +45,7 @@ $user_tier = $_SESSION['tier'] ?? 'silver';
 
         <div class="collapse navbar-collapse" id="menu">
             <!-- Form Tìm kiếm -->
-            <form action="index.php" method="GET" class="d-flex mx-lg-4 my-2 my-lg-0 flex-grow-1" style="max-width: 380px;">
+            <form action="index.php" method="GET" class="d-flex header-search-form mx-lg-4 my-2 my-lg-0 flex-grow-1">
                 <input type="hidden" name="act" value="sanpham">
                 <div class="input-group">
                     <input class="form-control form-control-sm" type="search" name="q" placeholder="Tìm hoa hồng, tulip, hướng dương..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">

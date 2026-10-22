@@ -71,7 +71,7 @@ switch ($act) {
     case 'xoagiohang':
     case 'xoatatcagiohang':
     case 'apvoucher':
-    case 'xoavoucher':
+    case 'bovoucher':
     case 'thanhtoan':
     case 'xacnhandathang':
     case 'dathangthanhcong':

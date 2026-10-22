@@ -100,7 +100,7 @@
                                 <strong class="d-block">Mã: <?= htmlspecialchars($voucher['code']) ?></strong>
                                 <small class="text-success">Giảm: -<?= number_format($discount, 0, ',', '.') ?>đ</small>
                             </div>
-                            <a href="index.php?act=xoavoucher" class="btn btn-sm btn-outline-danger" title="Bỏ voucher">Bỏ chọn</a>
+                            <a href="index.php?act=bovoucher" class="btn btn-sm btn-outline-danger" title="Bỏ voucher">Bỏ chọn</a>
                         </div>
                     <?php } else { ?>
                         <form method="POST" action="index.php?act=apvoucher" class="mb-3">

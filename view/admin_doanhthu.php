@@ -74,20 +74,22 @@
                         if ($d['revenue'] > $max_val_week) $max_val_week = $d['revenue'];
                     }
                 ?>
-                <div class="chart-bar-container mb-4">
-                    <?php foreach ($stats_7days as $day) { 
-                        $pct = round(($day['revenue'] / $max_val_week) * 100);
-                        if ($pct < 5 && $day['revenue'] > 0) $pct = 5;
-                    ?>
-                        <div class="chart-bar-item">
-                            <div class="chart-bar-fill" style="height: <?= $pct ?>%;">
-                                <?php if ($day['revenue'] > 0) { ?>
-                                    <span class="chart-bar-val"><?= number_format($day['revenue'] / 1000, 0) ?>k</span>
-                                <?php } ?>
+                <div class="chart-scroll-wrapper mb-4">
+                    <div class="chart-bar-container">
+                        <?php foreach ($stats_7days as $day) { 
+                            $pct = round(($day['revenue'] / $max_val_week) * 100);
+                            if ($pct < 5 && $day['revenue'] > 0) $pct = 5;
+                        ?>
+                            <div class="chart-bar-item">
+                                <div class="chart-bar-fill" style="height: <?= $pct ?>%;">
+                                    <?php if ($day['revenue'] > 0) { ?>
+                                        <span class="chart-bar-val"><?= number_format($day['revenue'] / 1000, 0) ?>k</span>
+                                    <?php } ?>
+                                </div>
+                                <div class="chart-bar-label"><?= date('d/m', strtotime($day['date'])) ?></div>
                             </div>
-                            <div class="chart-bar-label"><?= date('d/m', strtotime($day['date'])) ?></div>
-                        </div>
-                    <?php } ?>
+                        <?php } ?>
+                    </div>
                 </div>
 
                 <div class="table-responsive">
@@ -122,20 +124,22 @@
                         if ($m['revenue'] > $max_val_month) $max_val_month = $m['revenue'];
                     }
                 ?>
-                <div class="chart-bar-container mb-4">
-                    <?php foreach ($stats_months as $m) { 
-                        $pct = round(($m['revenue'] / $max_val_month) * 100);
-                        if ($pct < 5 && $m['revenue'] > 0) $pct = 5;
-                    ?>
-                        <div class="chart-bar-item">
-                            <div class="chart-bar-fill" style="height: <?= $pct ?>%;">
-                                <?php if ($m['revenue'] > 0) { ?>
-                                    <span class="chart-bar-val"><?= number_format($m['revenue'] / 1000, 0) ?>k</span>
-                                <?php } ?>
+                <div class="chart-scroll-wrapper mb-4">
+                    <div class="chart-bar-container">
+                        <?php foreach ($stats_months as $m) { 
+                            $pct = round(($m['revenue'] / $max_val_month) * 100);
+                            if ($pct < 5 && $m['revenue'] > 0) $pct = 5;
+                        ?>
+                            <div class="chart-bar-item">
+                                <div class="chart-bar-fill" style="height: <?= $pct ?>%;">
+                                    <?php if ($m['revenue'] > 0) { ?>
+                                        <span class="chart-bar-val"><?= number_format($m['revenue'] / 1000, 0) ?>k</span>
+                                    <?php } ?>
+                                </div>
+                                <div class="chart-bar-label">Th.<?= $m['month'] ?></div>
                             </div>
-                            <div class="chart-bar-label">Th.<?= $m['month'] ?></div>
-                        </div>
-                    <?php } ?>
+                        <?php } ?>
+                    </div>
                 </div>
 
                 <div class="table-responsive">

@@ -110,7 +110,7 @@ if ($act == 'apvoucher') {
 }
 
 // 6. Bỏ chọn voucher
-if ($act == 'xoavoucher') {
+if ($act == 'bovoucher') {
     unset($_SESSION['voucher']);
     header("Location: index.php?act=giohang");
     exit;
@@ -123,13 +123,19 @@ if ($act == 'xacnhandathang' && isset($_POST['dathang'])) {
         exit;
     }
 
-    $customer_name = trim($_POST['customer_name']);
-    $customer_phone = trim($_POST['customer_phone']);
-    $customer_email = trim($_POST['customer_email']);
-    $customer_address = trim($_POST['customer_address']);
+    $customer_name = trim($_POST['customer_name'] ?? '');
+    $customer_phone = trim($_POST['customer_phone'] ?? '');
+    $customer_email = trim($_POST['customer_email'] ?? '');
+    $customer_address = trim($_POST['customer_address'] ?? '');
     $note = trim($_POST['note'] ?? '');
     $payment_method = $_POST['payment_method'] ?? 'COD';
     $user_id = $_SESSION['id'] ?? null;
+
+    if (empty($customer_name) || empty($customer_phone) || empty($customer_address)) {
+        $_SESSION['flash_error'] = "Vui lòng nhập đầy đủ họ tên, số điện thoại và địa chỉ nhận hàng!";
+        header("Location: index.php?act=thanhtoan");
+        exit;
+    }
 
     $subtotal = 0;
     foreach ($_SESSION['cart'] as $it) {

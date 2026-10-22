@@ -70,8 +70,130 @@ class database
                     }
                 }
             }
+
+            // Tự động đảm bảo 5 tài khoản mẫu và 4 mã voucher luôn tồn tại để test hệ thống
+            $this->ensure_demo_data($conn);
         } catch (Exception $e) {
             // Tránh ngắt trang web nếu kiểm tra migration gặp lỗi nhỏ
+        }
+    }
+
+    private function ensure_demo_data($conn)
+    {
+        try {
+            // 1. Danh sách 5 tài khoản mẫu
+            $users = [
+                [
+                    'name' => 'Quản Trị Viên',
+                    'email' => 'admin@bloomshop.vn',
+                    'password' => '$2y$10$KAxIU4DnpqSNYGo61P9.POnusepGginOJHjlem9Dkjze2Qe.sg9pS', // admin123
+                    'role' => 'admin',
+                    'tier' => 'diamond',
+                    'spent' => 15000000.00,
+                    'phone' => '0901234567',
+                    'address' => 'Tòa nhà Bloom, Quận 1, TP.HCM'
+                ],
+                [
+                    'name' => 'Nguyễn Văn Nhân Viên',
+                    'email' => 'staff@bloomshop.vn',
+                    'password' => '$2y$10$1zwom.nZS681rIEeglmFc.PrUkoZt1cZjH5M35pGnFsuAWrFD6Idq', // staff123
+                    'role' => 'staff',
+                    'tier' => 'silver',
+                    'spent' => 0.00,
+                    'phone' => '0909888777',
+                    'address' => 'BloomShop Chi nhánh 1'
+                ],
+                [
+                    'name' => 'Lê Thị Kim Cương',
+                    'email' => 'diamond@bloomshop.vn',
+                    'password' => '$2y$10$z1KeoyWrs.dfa2k..ghNHu23LXrIz.g23ts3fIExZyOQoOjY3Atfe', // 123456
+                    'role' => 'user',
+                    'tier' => 'diamond',
+                    'spent' => 6800000.00,
+                    'phone' => '0912345678',
+                    'address' => '123 Lê Duẩn, Quận 1, TP.HCM'
+                ],
+                [
+                    'name' => 'Trần Hoàng Vàng',
+                    'email' => 'gold@bloomshop.vn',
+                    'password' => '$2y$10$z1KeoyWrs.dfa2k..ghNHu23LXrIz.g23ts3fIExZyOQoOjY3Atfe', // 123456
+                    'role' => 'user',
+                    'tier' => 'gold',
+                    'spent' => 2900000.00,
+                    'phone' => '0987654321',
+                    'address' => '456 Nguyễn Thị Minh Khai, Quận 3'
+                ],
+                [
+                    'name' => 'Phạm Ngọc Bạc',
+                    'email' => 'silver@bloomshop.vn',
+                    'password' => '$2y$10$z1KeoyWrs.dfa2k..ghNHu23LXrIz.g23ts3fIExZyOQoOjY3Atfe', // 123456
+                    'role' => 'user',
+                    'tier' => 'silver',
+                    'spent' => 550000.00,
+                    'phone' => '0933221100',
+                    'address' => '789 CMT8, Tân Bình, TP.HCM'
+                ]
+            ];
+
+            foreach ($users as $u) {
+                $chk = $conn->prepare("SELECT id FROM users WHERE email = :email");
+                $chk->execute([':email' => $u['email']]);
+                if ($row = $chk->fetch()) {
+                    $up = $conn->prepare("UPDATE users SET password = :pwd, role = :role, status = 1, tier = :tier, name = :name WHERE id = :id");
+                    $up->execute([
+                        ':pwd' => $u['password'],
+                        ':role' => $u['role'],
+                        ':tier' => $u['tier'],
+                        ':name' => $u['name'],
+                        ':id' => $row['id']
+                    ]);
+                } else {
+                    $ins = $conn->prepare("INSERT INTO users (name, email, password, phone, address, role, status, tier, total_spent) VALUES (:name, :email, :pwd, :phone, :address, :role, 1, :tier, :spent)");
+                    $ins->execute([
+                        ':name' => $u['name'],
+                        ':email' => $u['email'],
+                        ':pwd' => $u['password'],
+                        ':phone' => $u['phone'],
+                        ':address' => $u['address'],
+                        ':role' => $u['role'],
+                        ':tier' => $u['tier'],
+                        ':spent' => $u['spent']
+                    ]);
+                }
+            }
+
+            // 2. Danh sách 4 mã voucher mẫu
+            $vouchers = [
+                ['code' => 'BLOOM10', 'type' => 'percent', 'val' => 10.00, 'min' => 200000.00, 'qty' => 100],
+                ['code' => 'GIAM50K', 'type' => 'fixed', 'val' => 50000.00, 'min' => 300000.00, 'qty' => 100],
+                ['code' => 'VIPMEMBER', 'type' => 'fixed', 'val' => 100000.00, 'min' => 600000.00, 'qty' => 50],
+                ['code' => 'FREESHIP', 'type' => 'fixed', 'val' => 30000.00, 'min' => 150000.00, 'qty' => 200]
+            ];
+
+            foreach ($vouchers as $v) {
+                $chk = $conn->prepare("SELECT id FROM vouchers WHERE code = :code");
+                $chk->execute([':code' => $v['code']]);
+                if ($row = $chk->fetch()) {
+                    $up = $conn->prepare("UPDATE vouchers SET discount_type = :type, discount_value = :val, min_order_value = :min, status = 1, expiry_date = '2026-12-31' WHERE id = :id");
+                    $up->execute([
+                        ':type' => $v['type'],
+                        ':val' => $v['val'],
+                        ':min' => $v['min'],
+                        ':id' => $row['id']
+                    ]);
+                } else {
+                    $ins = $conn->prepare("INSERT INTO vouchers (code, discount_type, discount_value, min_order_value, quantity, used_count, expiry_date, status) VALUES (:code, :type, :val, :min, :qty, 0, '2026-12-31', 1)");
+                    $ins->execute([
+                        ':code' => $v['code'],
+                        ':type' => $v['type'],
+                        ':val' => $v['val'],
+                        ':min' => $v['min'],
+                        ':qty' => $v['qty']
+                    ]);
+                }
+            }
+        } catch (Exception $e) {
+            // Bỏ qua lỗi nhỏ
         }
     }
 
