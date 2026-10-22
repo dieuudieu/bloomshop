@@ -1,124 +1,64 @@
 <div class="container my-5">
-
-    <h2 class="text-center mb-4">Tất cả sản phẩm</h2>
-
-    <!-- FORM TÌM KIẾM VÀ LỌC DANH MỤC -->
-    <form action="index.php" method="GET" class="row g-3 mb-4">
-
-        <input type="hidden" name="act" value="sanpham">
-
-        <!-- Tìm theo tên -->
-        <div class="col-md-6">
-            <input
-                type="text"
-                name="keyword"
-                class="form-control"
-                placeholder="Nhập tên sản phẩm cần tìm..."
-                value="<?= htmlspecialchars($keyword) ?>"
-            >
+    <!-- Breadcrumb & Tiêu đề -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1">Bộ sưu tập hoa tươi</h2>
+            <p class="text-muted small mb-0">Tìm thấy <?= $total_products ?? count($sanpham) ?> sản phẩm</p>
         </div>
+        
+        <!-- Bộ lọc và sắp xếp -->
+        <form method="GET" action="index.php" class="d-flex align-items-center gap-2 flex-wrap">
+            <input type="hidden" name="act" value="sanpham">
+            <?php if (!empty($_GET['q'])) { ?>
+                <input type="hidden" name="q" value="<?= htmlspecialchars($_GET['q']) ?>">
+            <?php } ?>
 
-        <!-- Lọc danh mục -->
-        <div class="col-md-3">
-            <select name="id_dm" class="form-select">
-
-                <option value="0">Tất cả danh mục</option>
-
-                <?php foreach ($danhmuc as $dm) { ?>
-
-                    <option
-                        value="<?= $dm['id'] ?>"
-                        <?= $id_dm == $dm['id'] ? 'selected' : '' ?>
-                    >
+            <select name="id_dm" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                <option value="">Tất cả danh mục</option>
+                <?php if (!empty($danhmuc)) { foreach ($danhmuc as $dm) { ?>
+                    <option value="<?= $dm['id'] ?>" <?= (isset($_GET['id_dm']) && $_GET['id_dm'] == $dm['id']) ? 'selected' : '' ?>>
                         <?= htmlspecialchars($dm['name']) ?>
                     </option>
-
-                <?php } ?>
-
+                <?php }} ?>
             </select>
-        </div>
 
-        <!-- Nút tìm kiếm -->
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-primary w-100">
-                Tìm kiếm
-            </button>
-        </div>
+            <select name="sort" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                <option value="newest" <?= (($_GET['sort'] ?? '') == 'newest') ? 'selected' : '' ?>>Mới nhất</option>
+                <option value="price_asc" <?= (($_GET['sort'] ?? '') == 'price_asc') ? 'selected' : '' ?>>Giá tăng dần</option>
+                <option value="price_desc" <?= (($_GET['sort'] ?? '') == 'price_desc') ? 'selected' : '' ?>>Giá giảm dần</option>
+                <option value="sale" <?= (($_GET['sort'] ?? '') == 'sale') ? 'selected' : '' ?>>Đang khuyến mãi</option>
+            </select>
+        </form>
+    </div>
 
-    </form>
-
-    <!-- SỐ LƯỢNG SẢN PHẨM -->
-    <p class="text-muted mb-4">
-        Tìm thấy <?= $tongSanPham ?> sản phẩm
-    </p>
-
-    <!-- HIỂN THỊ DANH SÁCH SẢN PHẨM -->
+    <!-- Danh sách sản phẩm -->
     <?php include __DIR__ . '/_product_cards.php'; ?>
 
-    <!-- PHÂN TRANG -->
-    <?php if ($tongTrang > 1) { ?>
-
+    <!-- Phân trang -->
+    <?php if (isset($total_pages) && $total_pages > 1) { ?>
         <nav class="mt-5">
             <ul class="pagination justify-content-center">
+                <?php 
+                    $query_params = $_GET; 
+                ?>
+                <li class="page-item <?= ($current_page <= 1) ? 'disabled' : '' ?>">
+                    <?php $query_params['page'] = $current_page - 1; ?>
+                    <a class="page-link" href="index.php?<?= http_build_query($query_params) ?>">« Trước</a>
+                </li>
 
-                <!-- Trang trước -->
-                <?php if ($page > 1) { ?>
-                    <li class="page-item">
-                        <a
-                            class="page-link"
-                            href="index.php?<?= http_build_query([
-                                'act' => 'sanpham',
-                                'keyword' => $keyword,
-                                'id_dm' => $id_dm,
-                                'page' => $page - 1
-                            ]) ?>"
-                        >
-                            Trước
-                        </a>
+                <?php for ($i = 1; $i <= $total_pages; $i++) { 
+                    $query_params['page'] = $i;
+                ?>
+                    <li class="page-item <?= ($i == $current_page) ? 'active' : '' ?>">
+                        <a class="page-link" href="index.php?<?= http_build_query($query_params) ?>"><?= $i ?></a>
                     </li>
                 <?php } ?>
 
-                <!-- Các số trang -->
-                <?php for ($i = 1; $i <= $tongTrang; $i++) { ?>
-
-                    <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-
-                        <a
-                            class="page-link"
-                            href="index.php?<?= http_build_query([
-                                'act' => 'sanpham',
-                                'keyword' => $keyword,
-                                'id_dm' => $id_dm,
-                                'page' => $i
-                            ]) ?>"
-                        >
-                            <?= $i ?>
-                        </a>
-
-                    </li>
-
-                <?php } ?>
-
-                <!-- Trang sau -->
-                <?php if ($page < $tongTrang) { ?>
-                    <li class="page-item">
-                        <a
-                            class="page-link"
-                            href="index.php?<?= http_build_query([
-                                'act' => 'sanpham',
-                                'keyword' => $keyword,
-                                'id_dm' => $id_dm,
-                                'page' => $page + 1
-                            ]) ?>"
-                        >
-                            Sau
-                        </a>
-                    </li>
-                <?php } ?>
-
+                <li class="page-item <?= ($current_page >= $total_pages) ? 'disabled' : '' ?>">
+                    <?php $query_params['page'] = $current_page + 1; ?>
+                    <a class="page-link" href="index.php?<?= http_build_query($query_params) ?>">Sau »</a>
+                </li>
             </ul>
         </nav>
-
     <?php } ?>
-
 </div>
