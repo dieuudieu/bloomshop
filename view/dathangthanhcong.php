@@ -16,7 +16,7 @@
             <i class="bi bi-envelope-check-fill fs-2 text-primary"></i>
             <div>
                 <strong>Hóa đơn điện tử đã được tạo tự động!</strong><br>
-                <span>Hệ thống đã gửi hóa đơn chi tiết tới Quản trị viên (admin@bloomshop.vn) và khách hàng (<?= htmlspecialchars($order['customer_email']) ?>).</span>
+                <span>Hệ thống đã gửi hóa đơn chi tiết tới khách hàng (<?= htmlspecialchars($order['customer_email']) ?>).</span>
             </div>
         </div>
 

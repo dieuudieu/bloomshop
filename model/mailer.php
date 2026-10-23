@@ -21,17 +21,17 @@ if (file_exists(__DIR__ . '/PHPMailer/src/PHPMailer.php')) {
 // ==============================================================================
 
 // 1. Điền địa chỉ Gmail của bạn vào đây (người gửi hóa đơn):
-if (!defined('SMTP_USER')) define('SMTP_USER', 'email_cua_cac_ban@gmail.com');
+if (!defined('SMTP_USER')) define('SMTP_USER', 'dieutran141005@gmail.com');
 
 // 2. Điền Mật khẩu ứng dụng Google (App Password - 16 ký tự tạo trong tài khoản Google):
 //    Ví dụ: 'abcd efgh ijkl mnop'
-if (!defined('SMTP_PASS')) define('SMTP_PASS', 'app_password_16_ky_tu');
+if (!defined('SMTP_PASS')) define('SMTP_PASS', 'oulw nndd eiug chbe');
 
 // 3. Tên cửa hàng hiển thị trong hộp thư người nhận:
 if (!defined('SMTP_FROM_NAME')) define('SMTP_FROM_NAME', 'BloomShop Flowers');
 
 // 4. Email Admin nhận thông báo mỗi khi có đơn hàng mới:
-if (!defined('ADMIN_EMAIL')) define('ADMIN_EMAIL', 'admin@bloomshop.vn');
+if (!defined('ADMIN_EMAIL')) define('ADMIN_EMAIL', 'tranphuocdieu1410@gmail.com');
 
 // ==============================================================================
 
