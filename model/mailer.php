@@ -30,13 +30,32 @@ if (!defined('SMTP_PASS')) define('SMTP_PASS', 'oulw nndd eiug chbe');
 // 3. Tên cửa hàng hiển thị trong hộp thư người nhận:
 if (!defined('SMTP_FROM_NAME')) define('SMTP_FROM_NAME', 'BloomShop Flowers');
 
-// 4. Email Admin nhận thông báo mỗi khi có đơn hàng mới:
-if (!defined('ADMIN_EMAIL')) define('ADMIN_EMAIL', 'tranphuocdieu1410@gmail.com');
+// 4. Email Admin nhận thông báo mỗi khi có đơn hàng mới (hỗ trợ nhiều email cách nhau bằng dấu phẩy):
+if (!defined('ADMIN_EMAIL')) define('ADMIN_EMAIL', 'tranphuocdieu1410@gmail.com, dn629691@gmail.com');
 
 // ==============================================================================
 
 class Mailer
 {
+    /**
+     * Khởi tạo đối tượng PHPMailer cấu hình sẵn SMTP Gmail
+     */
+    private static function get_mailer_instance()
+    {
+        $mail = new PHPMailer(true);
+        $mail->SMTPDebug = SMTP::DEBUG_OFF;
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = SMTP_USER;
+        $mail->Password = str_replace(' ', '', SMTP_PASS);
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+        $mail->CharSet = 'UTF-8';
+        $mail->setFrom(SMTP_USER, SMTP_FROM_NAME);
+        return $mail;
+    }
+
     /**
      * Gửi hóa đơn đơn hàng tự động đến Khách hàng và Quản trị viên bằng PHPMailer
      */
@@ -51,62 +70,54 @@ class Mailer
         $sent_customer = false;
         $sent_admin = false;
 
-        // Kiểm tra xem đã điền Gmail và Mật khẩu ứng dụng thật chưa
+        // Kiểm tra xem đã cấu hình Gmail và Mật khẩu ứng dụng chưa
         $is_configured = (SMTP_USER !== 'email_cua_cac_ban@gmail.com' && SMTP_PASS !== 'app_password_16_ky_tu');
 
         if ($is_configured && class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-            try {
-                // 1. Gửi email hóa đơn đến người mua hàng
-                if (!empty($order['customer_email'])) {
-                    $mail = new PHPMailer(true);
-                    $mail->SMTPDebug = SMTP::DEBUG_OFF;
-                    $mail->isSMTP();
-                    $mail->Host = 'smtp.gmail.com';
-                    $mail->SMTPAuth = true;
-                    $mail->Username = SMTP_USER;
-                    $mail->Password = str_replace(' ', '', SMTP_PASS);
-                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                    $mail->Port = 587;
-                    $mail->CharSet = 'UTF-8';
-
-                    $mail->setFrom(SMTP_USER, SMTP_FROM_NAME);
-                    $mail->addAddress($order['customer_email'], $order['customer_name']);
-
-                    $mail->isHTML(true);
-                    $mail->Subject = $subject;
-                    $mail->Body = $html;
-                    $mail->AltBody = 'Cảm ơn quý khách đã đặt hàng tại BloomShop. Đơn hàng #' . $order_id . ' đã được ghi nhận.';
+            // 1. GỬI EMAIL XÁC NHẬN CHO KHÁCH HÀNG (Khối try-catch riêng biệt)
+            $cust_email = trim($order['customer_email'] ?? '');
+            if (!empty($cust_email) && filter_var($cust_email, FILTER_VALIDATE_EMAIL)) {
+                try {
+                    $mail_cust = self::get_mailer_instance();
+                    $mail_cust->addAddress($cust_email, $order['customer_name'] ?? 'Khách hàng');
+                    $mail_cust->isHTML(true);
+                    $mail_cust->Subject = $subject;
+                    $mail_cust->Body = $html;
+                    $mail_cust->AltBody = 'Cảm ơn quý khách đã đặt hàng tại BloomShop. Đơn hàng #' . $order_id . ' đã được ghi nhận.';
                     
-                    $mail->send();
+                    $mail_cust->send();
                     $sent_customer = true;
+                } catch (\Throwable $e) {
+                    error_log("PHPMailer Customer Send Error: " . $e->getMessage());
                 }
+            }
 
-                // 2. Gửi email thông báo đơn hàng mới đến Admin
-                if (!empty(ADMIN_EMAIL) && ADMIN_EMAIL !== $order['customer_email']) {
-                    $mail_admin = new PHPMailer(true);
-                    $mail_admin->SMTPDebug = SMTP::DEBUG_OFF;
-                    $mail_admin->isSMTP();
-                    $mail_admin->Host = 'smtp.gmail.com';
-                    $mail_admin->SMTPAuth = true;
-                    $mail_admin->Username = SMTP_USER;
-                    $mail_admin->Password = str_replace(' ', '', SMTP_PASS);
-                    $mail_admin->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                    $mail_admin->Port = 587;
-                    $mail_admin->CharSet = 'UTF-8';
+            // 2. GỬI EMAIL THÔNG BÁO CHO QUẢN TRỊ VIÊN (Khối try-catch riêng biệt, độc lập)
+            if (!empty(ADMIN_EMAIL)) {
+                try {
+                    $mail_admin = self::get_mailer_instance();
+                    $admin_list = array_map('trim', explode(',', ADMIN_EMAIL));
+                    $has_recipient = false;
 
-                    $mail_admin->setFrom(SMTP_USER, SMTP_FROM_NAME);
-                    $mail_admin->addAddress(ADMIN_EMAIL, 'Quản Trị Viên BloomShop');
+                    foreach ($admin_list as $adm_mail) {
+                        if (filter_var($adm_mail, FILTER_VALIDATE_EMAIL)) {
+                            $mail_admin->addAddress($adm_mail, 'Quản Trị Viên BloomShop');
+                            $has_recipient = true;
+                        }
+                    }
 
-                    $mail_admin->isHTML(true);
-                    $mail_admin->Subject = "[Thông báo đơn mới] Đơn hàng #$order_id";
-                    $mail_admin->Body = $html;
+                    if ($has_recipient) {
+                        $mail_admin->isHTML(true);
+                        $mail_admin->Subject = "[Thông báo đơn mới] Đơn hàng #$order_id từ " . ($order['customer_name'] ?? 'Khách hàng');
+                        $mail_admin->Body = $html;
+                        $mail_admin->AltBody = "Có đơn hàng mới #$order_id vừa được đặt trên hệ thống BloomShop.";
 
-                    $mail_admin->send();
-                    $sent_admin = true;
+                        $mail_admin->send();
+                        $sent_admin = true;
+                    }
+                } catch (\Throwable $e) {
+                    error_log("PHPMailer Admin Send Error: " . $e->getMessage());
                 }
-            } catch (Exception $e) {
-                // Ghi log lỗi nếu có trục trặc mạng để không làm gián đoạn việc mua hàng
-                error_log("PHPMailer Send Error: " . $e->getMessage());
             }
         }
 

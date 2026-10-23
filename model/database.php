@@ -59,6 +59,8 @@ class database
                 $this->add_column_if_not_exists($conn, 'users', 'total_spent', 'DECIMAL(12,2) DEFAULT 0');
                 $this->add_column_if_not_exists($conn, 'users', 'phone', 'VARCHAR(20) DEFAULT NULL');
                 $this->add_column_if_not_exists($conn, 'users', 'address', 'VARCHAR(255) DEFAULT NULL');
+                // Đảm bảo cột role trong bảng users hỗ trợ đủ 'admin', 'staff', 'user'
+                $conn->exec("ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'staff', 'user') NOT NULL DEFAULT 'user'");
                 
                 // Đảm bảo có bảng tracking, donhang, chitiet_donhang, danhgia nếu thiếu
                 $tracking = $conn->query("SHOW TABLES LIKE 'order_tracking'")->fetchAll();
