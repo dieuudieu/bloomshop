@@ -59,6 +59,7 @@ class database
                 $this->add_column_if_not_exists($conn, 'users', 'total_spent', 'DECIMAL(12,2) DEFAULT 0');
                 $this->add_column_if_not_exists($conn, 'users', 'phone', 'VARCHAR(20) DEFAULT NULL');
                 $this->add_column_if_not_exists($conn, 'users', 'address', 'VARCHAR(255) DEFAULT NULL');
+                $this->add_column_if_not_exists($conn, 'users', 'created_at', 'DATETIME DEFAULT CURRENT_TIMESTAMP');
                 // Đảm bảo cột role trong bảng users hỗ trợ đủ 'admin', 'staff', 'user'
                 $conn->exec("ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'staff', 'user') NOT NULL DEFAULT 'user'");
                 
@@ -83,6 +84,12 @@ class database
     private function ensure_demo_data($conn)
     {
         try {
+            // Chỉ nạp dữ liệu mẫu nếu bảng users chưa có tài khoản nào (tránh tự phục hồi khi Admin đã xóa nhân viên)
+            $countUsers = (int)$conn->query("SELECT COUNT(*) FROM `users`")->fetchColumn();
+            if ($countUsers > 0) {
+                return;
+            }
+
             // 1. Danh sách 5 tài khoản mẫu
             $users = [
                 [

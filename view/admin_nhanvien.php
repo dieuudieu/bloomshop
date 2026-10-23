@@ -42,7 +42,7 @@
                                     <span class="badge bg-danger">Bị khóa</span>
                                 <?php } ?>
                             </td>
-                            <td class="small text-muted"><?= date('d/m/Y', strtotime($nv['created_at'])) ?></td>
+                            <td class="small text-muted"><?= !empty($nv['created_at']) ? date('d/m/Y', strtotime($nv['created_at'])) : date('d/m/Y') ?></td>
                             <td class="text-center">
                                 <a href="index.php?act=suanv&id=<?= $nv['id'] ?>" class="btn btn-warning btn-sm" title="Sửa thông tin">
                                     <i class="bi bi-pencil-square"></i> Sửa

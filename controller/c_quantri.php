@@ -19,6 +19,7 @@ if ($act == 'themnv' && isset($_POST['themnv'])) {
         $data->execute_item($sql, [
             ':name' => $name, ':email' => $email, ':password' => $password, ':phone' => $phone
         ]);
+        $_SESSION['flash_success'] = "Thêm nhân viên mới thành công!";
         header("Location: index.php?act=quanlynv");
         exit;
     }
@@ -43,13 +44,17 @@ if ($act == 'capnhatnv' && isset($_POST['capnhatnv'])) {
             ':name' => $name, ':email' => $email, ':phone' => $phone, ':status' => $status, ':id' => $id
         ]);
     }
+    $_SESSION['flash_success'] = "Cập nhật thông tin nhân viên thành công!";
     header("Location: index.php?act=quanlynv");
     exit;
 }
 
-if ($act == 'xoanv' && isset($_POST['xoanv'])) {
-    $id = (int)$_POST['id'];
-    $data->execute_item("DELETE FROM users WHERE id = :id AND role = 'staff'", [':id' => $id]);
+if ($act == 'xoanv') {
+    $id = (int)($_POST['id'] ?? ($_GET['id'] ?? 0));
+    if ($id > 0) {
+        $data->execute_item("DELETE FROM users WHERE id = :id AND role = 'staff'", [':id' => $id]);
+        $_SESSION['flash_success'] = "Đã xóa nhân viên thành công!";
+    }
     header("Location: index.php?act=quanlynv");
     exit;
 }
