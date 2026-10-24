@@ -33,7 +33,7 @@
                         <tr>
                             <td>#<?= $sp['id'] ?></td>
                             <td>
-                                <img src="/bloomshop/view/image/sanpham/<?= htmlspecialchars($sp['image']) ?>" width="60" height="60" class="rounded object-fit-cover" alt="" onerror="this.src='/bloomshop/view/image/banner.jpg'">
+                                <img src="<?= $asset_dir ?>/image/sanpham/<?= htmlspecialchars($sp['image']) ?>" width="60" height="60" class="rounded object-fit-cover" alt="" onerror="this.src='<?= $asset_dir ?>/image/banner.jpg'">
                             </td>
                             <td class="fw-semibold"><?= htmlspecialchars($sp['name']) ?></td>
                             <td><?= htmlspecialchars($sp['tendanhmuc']) ?></td>

@@ -79,7 +79,7 @@
                             <td>
                                 <div class="d-flex align-items-center gap-3">
                                     <?php if (!empty($it['product_image'])) { ?>
-                                        <img src="/bloomshop/view/image/sanpham/<?= htmlspecialchars($it['product_image']) ?>" width="55" height="55" class="rounded object-fit-cover" alt="" onerror="this.src='/bloomshop/view/image/banner.jpg'">
+                                        <img src="<?= $asset_dir ?>/image/sanpham/<?= htmlspecialchars($it['product_image']) ?>" width="55" height="55" class="rounded object-fit-cover" alt="" onerror="this.src='<?= $asset_dir ?>/image/banner.jpg'">
                                     <?php } ?>
                                     <div class="fw-semibold"><?= htmlspecialchars($it['product_name']) ?></div>
                                 </div>

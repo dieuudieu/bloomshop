@@ -227,7 +227,7 @@
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <img src="/bloomshop/view/image/sanpham/<?= htmlspecialchars($bc['image']) ?>" width="45" height="45" class="rounded object-fit-cover" alt="" onerror="this.src='/bloomshop/view/image/banner.jpg'">
+                                            <img src="<?= $asset_dir ?>/image/sanpham/<?= htmlspecialchars($bc['image']) ?>" width="45" height="45" class="rounded object-fit-cover" alt="" onerror="this.src='<?= $asset_dir ?>/image/banner.jpg'">
                                             <div>
                                                 <a href="index.php?act=chitiettsp&id=<?= $bc['id'] ?>" class="text-dark fw-semibold small text-decoration-none">
                                                     <?= htmlspecialchars($bc['name']) ?>
@@ -279,7 +279,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <img src="/bloomshop/view/image/sanpham/<?= htmlspecialchars($e['image']) ?>" width="45" height="45" class="rounded object-fit-cover" alt="" onerror="this.src='/bloomshop/view/image/banner.jpg'">
+                                            <img src="<?= $asset_dir ?>/image/sanpham/<?= htmlspecialchars($e['image']) ?>" width="45" height="45" class="rounded object-fit-cover" alt="" onerror="this.src='<?= $asset_dir ?>/image/banner.jpg'">
                                             <div>
                                                 <a href="index.php?act=chitiettsp&id=<?= $e['id'] ?>" class="text-dark fw-semibold small text-decoration-none">
                                                     <?= htmlspecialchars($e['name']) ?>

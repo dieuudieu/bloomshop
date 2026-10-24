@@ -11,7 +11,7 @@
                 </div>
             </div>
             <div class="col-md-6 hero-image mt-4 mt-md-0">
-                <img src="/bloomshop/view/image/banner.jpg" alt="Hoa tươi BloomShop" onerror="this.src='https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=800&q=80'">
+                <img src="<?= $asset_dir ?>/image/banner.jpg" alt="Hoa tươi BloomShop" onerror="this.src='<?= $asset_dir ?>/image/banner.jpg'">
             </div>
         </div>
     </div>

@@ -12,7 +12,7 @@
                     <?php } ?>
                     
                     <a href="index.php?act=chitiettsp&id=<?= $sp['id'] ?>" class="text-decoration-none d-block overflow-hidden">
-                        <img class="card-img-top product-image" src="/bloomshop/view/image/sanpham/<?= htmlspecialchars($sp['image']) ?>" alt="<?= htmlspecialchars($sp['name']) ?>" onerror="this.src='/bloomshop/view/image/banner.jpg'">
+                        <img class="card-img-top product-image" src="<?= $asset_dir ?>/image/sanpham/<?= htmlspecialchars($sp['image']) ?>" alt="<?= htmlspecialchars($sp['name']) ?>" onerror="this.src='<?= $asset_dir ?>/image/banner.jpg'">
                     </a>
 
                     <div class="card-body d-flex flex-column text-center p-2 p-md-3">

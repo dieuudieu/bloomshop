@@ -50,7 +50,7 @@
             <div class="mb-3">
                 <label class="form-label fw-semibold">Ảnh hiện tại</label>
                 <div>
-                    <img width="120" height="120" class="rounded object-fit-cover border" src="/bloomshop/view/image/sanpham/<?= htmlspecialchars($sp['image']) ?>" alt="" onerror="this.src='/bloomshop/view/image/banner.jpg'">
+                    <img width="120" height="120" class="rounded object-fit-cover border" src="<?= $asset_dir ?>/image/sanpham/<?= htmlspecialchars($sp['image']) ?>" alt="" onerror="this.src='<?= $asset_dir ?>/image/banner.jpg'">
                 </div>
             </div>
 

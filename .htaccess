@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Tự động map đường dẫn /bloomshop/ về root nếu chạy ở tên miền chính trên hosting
+    RewriteRule ^bloomshop/(.*)$ $1 [L,QSA]
+
+    # Chặn duyệt cây thư mục
+    Options -Indexes
+
+    # Bảo vệ các file cấu hình và database
+    <FilesMatch "\.(sql|log|env|git|lock)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>

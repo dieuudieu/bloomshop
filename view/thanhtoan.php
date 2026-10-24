@@ -97,7 +97,7 @@
                         <?php foreach ($_SESSION['cart'] as $sp) { ?>
                             <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
                                 <div class="d-flex align-items-center gap-2">
-                                    <img src="/bloomshop/view/image/sanpham/<?= htmlspecialchars($sp['image']) ?>" width="45" height="45" class="rounded object-fit-cover" alt="" onerror="this.src='/bloomshop/view/image/banner.jpg'">
+                                    <img src="<?= $asset_dir ?>/image/sanpham/<?= htmlspecialchars($sp['image']) ?>" width="45" height="45" class="rounded object-fit-cover" alt="" onerror="this.src='<?= $asset_dir ?>/image/banner.jpg'">
                                     <div>
                                         <div class="small fw-semibold"><?= htmlspecialchars($sp['name']) ?></div>
                                         <div class="small text-muted">x <?= $sp['qty'] ?></div>

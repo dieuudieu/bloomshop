@@ -44,7 +44,7 @@
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center gap-3">
-                                                <img src="/bloomshop/view/image/sanpham/<?= htmlspecialchars($sp['image']) ?>" width="65" height="65" class="rounded object-fit-cover" alt="" onerror="this.src='/bloomshop/view/image/banner.jpg'">
+                                                <img src="<?= $asset_dir ?>/image/sanpham/<?= htmlspecialchars($sp['image']) ?>" width="65" height="65" class="rounded object-fit-cover" alt="" onerror="this.src='<?= $asset_dir ?>/image/banner.jpg'">
                                                 <div>
                                                     <a href="index.php?act=chitiettsp&id=<?= $pid ?>" class="text-dark fw-semibold text-decoration-none d-block">
                                                         <?= htmlspecialchars($sp['name']) ?>

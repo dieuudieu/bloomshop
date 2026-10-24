@@ -2,6 +2,9 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+if (!isset($asset_dir)) {
+    $asset_dir = file_exists('view/css/style.css') ? 'view' : (file_exists('../view/css/style.css') ? '../view' : 'view');
+}
 $cart_count = 0;
 if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $item) {
@@ -20,7 +23,7 @@ $user_tier = $_SESSION['tier'] ?? 'silver';
     <title>BloomShop - Cửa hàng hoa tươi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="/bloomshop/view/css/style.css" rel="stylesheet">
+    <link href="<?= $asset_dir ?>/css/style.css" rel="stylesheet">
 </head>
 <body>
 <div class="top-bar d-flex justify-content-between px-4 align-items-center flex-wrap">

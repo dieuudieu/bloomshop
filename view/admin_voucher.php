@@ -71,12 +71,21 @@
                                 <a href="index.php?act=suavoucher&id=<?= $vc['id'] ?>" class="btn btn-warning btn-sm" title="Sửa voucher">
                                     <i class="bi bi-pencil-square"></i> Sửa
                                 </a>
-                                <form method="POST" action="index.php?act=xoavoucher" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa voucher này?')">
-                                    <input type="hidden" name="id" value="<?= $vc['id'] ?>">
-                                    <button type="submit" name="xoavoucher" class="btn btn-danger btn-sm" title="Xóa voucher">
-                                        <i class="bi bi-trash"></i> Xóa
+                                <?php if ($vc['used_count'] > 0) { ?>
+                                    <button type="button" 
+                                            class="btn btn-outline-secondary btn-sm" 
+                                            onclick="alert('Ràng buộc toàn vẹn dữ liệu: Mã voucher \'<?= htmlspecialchars(addslashes($vc['code'])) ?>\' đã được áp dụng trong <?= $vc['used_count'] ?> đơn hàng/hóa đơn!\n\nBạn chỉ có thể chỉnh sửa trạng thái sang \'Tạm khóa\' để ngừng áp dụng thay vì xóa để bảo toàn lịch sử đơn.')" 
+                                            title="Không thể xóa vì đã có đơn hàng sử dụng">
+                                        <i class="bi bi-lock-fill"></i> Đã khóa
                                     </button>
-                                </form>
+                                <?php } else { ?>
+                                    <form method="POST" action="index.php?act=xoavoucher" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa voucher này?')">
+                                        <input type="hidden" name="id" value="<?= $vc['id'] ?>">
+                                        <button type="submit" name="xoavoucher" class="btn btn-danger btn-sm" title="Xóa voucher">
+                                            <i class="bi bi-trash"></i> Xóa
+                                        </button>
+                                    </form>
+                                <?php } ?>
                             </td>
                         </tr>
                     <?php }} else { ?>

@@ -47,12 +47,18 @@
                                 <a href="index.php?act=suanv&id=<?= $nv['id'] ?>" class="btn btn-warning btn-sm" title="Sửa thông tin">
                                     <i class="bi bi-pencil-square"></i> Sửa
                                 </a>
-                                <form method="POST" action="index.php?act=xoanv" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa nhân viên này?')">
-                                    <input type="hidden" name="id" value="<?= $nv['id'] ?>">
-                                    <button type="submit" name="xoanv" class="btn btn-danger btn-sm" title="Xóa nhân viên">
-                                        <i class="bi bi-trash"></i> Xóa
+                                <?php if (isset($_SESSION['id']) && $_SESSION['id'] == $nv['id']) { ?>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="alert('Bạn không thể tự xóa tài khoản của chính mình khi đang đăng nhập!')" title="Không thể tự xóa chính mình">
+                                        <i class="bi bi-lock-fill"></i> Đang dùng
                                     </button>
-                                </form>
+                                <?php } else { ?>
+                                    <form method="POST" action="index.php?act=xoanv" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa nhân viên này?')">
+                                        <input type="hidden" name="id" value="<?= $nv['id'] ?>">
+                                        <button type="submit" name="xoanv" class="btn btn-danger btn-sm" title="Xóa nhân viên">
+                                            <i class="bi bi-trash"></i> Xóa
+                                        </button>
+                                    </form>
+                                <?php } ?>
                             </td>
                         </tr>
                     <?php }} else { ?>
