@@ -130,27 +130,52 @@ class QuanTriController extends BaseController
             $status = (int)$this->post('status', 1);
             $password = $this->post('password', '');
 
+            if (isset($_SESSION['id']) && (int)$_SESSION['id'] === $id && $status === 0) {
+                $status = 1;
+                $this->setFlashError("Ràng buộc bảo mật: Bạn không thể tự khóa tài khoản của chính mình!");
+            } else {
+                $msg = "Cập nhật thông tin nhân viên thành công!";
+                if ($status === 0) {
+                    $msg .= " (Tài khoản đã bị khóa và lập tức mất toàn bộ quyền truy cập)";
+                }
+                $this->setFlashSuccess($msg);
+            }
+
             $this->taiKhoanModel->updateStaff($id, $name, $email, $phone, $status, $password);
-            $this->setFlashSuccess("Cập nhật thông tin nhân viên thành công!");
         }
         $this->redirect('index.php?act=quanlynv');
     }
 
-    public function xoaNv()
+    /**
+     * Khóa hoặc mở khóa tài khoản nhân viên (Admin Only)
+     * Khi thực hiện khóa, nhân viên lập tức bị tước quyền truy cập hệ thống
+     */
+    public function khoaNv()
     {
         $id = (int)($this->post('id') ?? $this->get('id', 0));
+        $status = (int)($this->post('status') ?? $this->get('status', 0));
+
         if ($id > 0) {
             if (isset($_SESSION['id']) && (int)$_SESSION['id'] === $id) {
-                $this->setFlashError("Ràng buộc bảo mật: Bạn không thể tự xóa tài khoản của chính mình khi đang đăng nhập!");
+                $this->setFlashError("Ràng buộc bảo mật: Bạn không thể tự khóa tài khoản của chính mình khi đang đăng nhập!");
             } else {
-                try {
-                    $this->taiKhoanModel->deleteStaff($id);
-                    $this->setFlashSuccess("Đã xóa nhân viên thành công!");
-                } catch (Exception $e) {
-                    $this->setFlashError($e->getMessage());
+                $this->taiKhoanModel->updateStaffStatus($id, $status);
+                if ($status === 0) {
+                    $this->setFlashSuccess("Đã khóa tài khoản nhân viên thành công! Nhân viên này đã bị tước toàn bộ quyền truy cập hệ thống ngay lập tức.");
+                } else {
+                    $this->setFlashSuccess("Đã mở khóa tài khoản nhân viên thành công! Nhân viên đã có thể đăng nhập lại.");
                 }
             }
         }
+        $this->redirect('index.php?act=quanlynv');
+    }
+
+    /**
+     * Không cho phép xóa nhân viên (Chỉ được phép khóa tài khoản)
+     */
+    public function xoaNv()
+    {
+        $this->setFlashError("Chính sách hệ thống: Quyền Admin không cho phép xóa tài khoản nhân viên để bảo toàn dữ liệu lịch sử đơn hàng. Bạn chỉ được phép KHÓA tài khoản!");
         $this->redirect('index.php?act=quanlynv');
     }
 

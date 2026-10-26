@@ -31,8 +31,9 @@
                 <label class="form-label fw-semibold">Trạng thái tài khoản</label>
                 <select name="status" class="form-select">
                     <option value="1" <?= ($nv['status'] == 1) ? 'selected' : '' ?>>Hoạt động bình thường</option>
-                    <option value="0" <?= ($nv['status'] == 0) ? 'selected' : '' ?>>Khóa tài khoản</option>
+                    <option value="0" <?= ($nv['status'] == 0) ? 'selected' : '' ?>>Khóa tài khoản (Mất toàn bộ quyền truy cập)</option>
                 </select>
+                <div class="form-text text-muted">Lưu ý: Khi chọn Khóa tài khoản, nhân viên sẽ lập tức bị tước quyền truy cập và bị hủy phiên làm việc.</div>
             </div>
 
             <div class="d-flex gap-2">

@@ -42,6 +42,25 @@ require_once __DIR__ . "/controller/QuanTriController.php";
 $act = $_REQUEST['act'] ?? 'trangchu';
 
 // 5. LỚP BẢO VỆ PHÂN QUYỀN (AUTHENTICATION & AUTHORIZATION MIDDLEWARE)
+// 5.1 Kiểm tra trạng thái tài khoản đang đăng nhập theo thời gian thực (Real-time Guard)
+if (isset($_SESSION['id'])) {
+    $auth_guard_user = (new TaiKhoanModel())->findById($_SESSION['id']);
+    // Nếu tài khoản không tồn tại hoặc đã bị quản trị viên khóa (status = 0)
+    if (!$auth_guard_user || (int)($auth_guard_user['status'] ?? 1) === 0) {
+        $was_staff = (($_SESSION['role'] ?? '') === 'staff');
+        session_unset();
+        session_destroy();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION['flash_error'] = $was_staff
+            ? 'Tài khoản nhân viên của bạn đã bị Quản trị viên khóa! Bạn đã mất toàn bộ quyền truy cập hệ thống.'
+            : 'Tài khoản của bạn đã bị khóa bởi Quản trị viên. Vui lòng liên hệ hotline để được hỗ trợ.';
+        header("Location: index.php?act=dangnhap");
+        exit;
+    }
+}
+
 // Danh sách các chức năng dành cho Quản trị viên và Nhân viên (Staff & Admin)
 $staff_allowed = [
     'danhmuc', 'themdm', 'suadm', 'capnhatdm', 'xoadm',
@@ -55,7 +74,7 @@ $staff_allowed = [
 
 // Danh sách các chức năng chỉ dành riêng cho Admin tối cao
 $admin_only = [
-    'quanlynv', 'themnv', 'suanv', 'capnhatnv', 'xoanv',
+    'quanlynv', 'themnv', 'suanv', 'capnhatnv', 'khoanv', 'xoanv',
     'doanhthu'
 ];
 
@@ -257,6 +276,9 @@ switch ($act) {
         break;
     case 'capnhatnv':
         (new QuanTriController())->capNhatNv();
+        break;
+    case 'khoanv':
+        (new QuanTriController())->khoaNv();
         break;
     case 'xoanv':
         (new QuanTriController())->xoaNv();

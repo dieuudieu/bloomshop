@@ -1,5 +1,5 @@
 <div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <div>
             <h2 class="fw-bold mb-1" style="color: #604b41;">
                 <i class="bi bi-person-badge"></i> Quản lý nhân viên
@@ -9,6 +9,14 @@
         <a href="index.php?act=themnv" class="btn btn-success">
             <i class="bi bi-person-plus-fill me-1"></i> + Thêm nhân viên
         </a>
+    </div>
+
+    <!-- Thông báo chính sách phân quyền Admin -->
+    <div class="alert alert-info border-0 shadow-sm rounded-3 py-2 px-3 mb-4 d-flex align-items-center gap-2">
+        <i class="bi bi-shield-lock text-primary fs-5"></i>
+        <div class="small">
+            <strong>Chính sách phân quyền Admin:</strong> Hệ thống không cho phép xóa tài khoản nhân viên nhằm bảo toàn toàn vẹn dữ liệu đơn hàng và lịch sử tác vụ. Khi cần dừng quyền làm việc, Quản trị viên sử dụng thao tác <strong>Khóa quyền</strong>. Tài khoản bị khóa sẽ lập tức mất quyền truy cập hệ thống.
+        </div>
     </div>
 
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden bg-white">
@@ -27,7 +35,7 @@
                 </thead>
                 <tbody>
                     <?php if (!empty($danhsach_nv)) { foreach ($danhsach_nv as $nv) { ?>
-                        <tr>
+                        <tr class="<?= ($nv['status'] == 0) ? 'table-light text-muted' : '' ?>">
                             <td>#<?= $nv['id'] ?></td>
                             <td class="fw-semibold">
                                 <i class="bi bi-person text-secondary me-1"></i>
@@ -37,25 +45,27 @@
                             <td><?= htmlspecialchars($nv['phone'] ?? 'Chưa cập nhật') ?></td>
                             <td>
                                 <?php if ($nv['status'] == 1) { ?>
-                                    <span class="badge bg-success">Hoạt động</span>
+                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Hoạt động</span>
                                 <?php } else { ?>
-                                    <span class="badge bg-danger">Bị khóa</span>
+                                    <span class="badge bg-danger"><i class="bi bi-lock-fill me-1"></i>Đã khóa (Mất quyền)</span>
                                 <?php } ?>
                             </td>
                             <td class="small text-muted"><?= !empty($nv['created_at']) ? date('d/m/Y', strtotime($nv['created_at'])) : date('d/m/Y') ?></td>
                             <td class="text-center">
-                                <a href="index.php?act=suanv&id=<?= $nv['id'] ?>" class="btn btn-warning btn-sm" title="Sửa thông tin">
+                                <a href="index.php?act=suanv&id=<?= $nv['id'] ?>" class="btn btn-warning btn-sm me-1" title="Sửa thông tin">
                                     <i class="bi bi-pencil-square"></i> Sửa
                                 </a>
                                 <?php if (isset($_SESSION['id']) && $_SESSION['id'] == $nv['id']) { ?>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="alert('Bạn không thể tự xóa tài khoản của chính mình khi đang đăng nhập!')" title="Không thể tự xóa chính mình">
-                                        <i class="bi bi-lock-fill"></i> Đang dùng
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="alert('Bạn không thể tự khóa tài khoản của chính mình khi đang đăng nhập!')" title="Không thể tự khóa chính mình">
+                                        <i class="bi bi-shield-lock-fill"></i> Đang dùng
                                     </button>
                                 <?php } else { ?>
-                                    <form method="POST" action="index.php?act=xoanv" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa nhân viên này?')">
+                                    <form method="POST" action="index.php?act=khoanv" class="d-inline" onsubmit="return confirm('<?= ($nv['status'] == 1) ? 'Bạn có chắc chắn muốn KHÓA tài khoản nhân viên này?\n\nNhân viên sẽ MẤT TOÀN BỘ QUYỀN TRUY CẬP hệ thống ngay lập tức.' : 'Bạn muốn MỞ KHÓA tài khoản cho nhân viên này?' ?>')">
                                         <input type="hidden" name="id" value="<?= $nv['id'] ?>">
-                                        <button type="submit" name="xoanv" class="btn btn-danger btn-sm" title="Xóa nhân viên">
-                                            <i class="bi bi-trash"></i> Xóa
+                                        <input type="hidden" name="status" value="<?= ($nv['status'] == 1) ? 0 : 1 ?>">
+                                        <button type="submit" class="btn btn-sm <?= ($nv['status'] == 1) ? 'btn-outline-danger' : 'btn-outline-success' ?>" title="<?= ($nv['status'] == 1) ? 'Khóa quyền nhân viên' : 'Mở khóa tài khoản' ?>">
+                                            <i class="bi <?= ($nv['status'] == 1) ? 'bi-lock-fill' : 'bi-unlock-fill' ?>"></i>
+                                            <?= ($nv['status'] == 1) ? 'Khóa quyền' : 'Mở khóa' ?>
                                         </button>
                                     </form>
                                 <?php } ?>

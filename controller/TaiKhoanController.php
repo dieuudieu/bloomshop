@@ -49,7 +49,9 @@ class TaiKhoanController extends BaseController
 
             if ($user && password_verify($password, $user['password'])) {
                 if (isset($user['status']) && (int)$user['status'] === 0) {
-                    $this->loi = 'Tài khoản của bạn đã bị khóa bởi Quản trị viên. Vui lòng liên hệ hotline để được hỗ trợ.';
+                    $this->loi = (($user['role'] ?? '') === 'staff')
+                        ? 'Tài khoản nhân viên của bạn đã bị Quản trị viên khóa! Bạn đã mất toàn bộ quyền truy cập hệ thống.'
+                        : 'Tài khoản của bạn đã bị khóa bởi Quản trị viên. Vui lòng liên hệ hotline để được hỗ trợ.';
                 } else {
                     session_regenerate_id(true);
                     $_SESSION['id'] = $user['id'];

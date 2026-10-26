@@ -139,12 +139,24 @@ class TaiKhoanModel extends BaseModel
     }
 
     /**
-     * Xóa tài khoản nhân viên
+     * Khóa hoặc mở khóa tài khoản nhân viên (Admin Only)
+     */
+    public function updateStaffStatus($id, $status)
+    {
+        $sql = "UPDATE users SET status = :st WHERE id = :id AND role = 'staff'";
+        $res = $this->execute_item($sql, [
+            ':st' => (int)$status,
+            ':id' => (int)$id
+        ]);
+        $this->exportSqlDump();
+        return $res;
+    }
+
+    /**
+     * Không cho phép xóa nhân viên khỏi CSDL (chuyển sang khóa tài khoản để bảo toàn dữ liệu lịch sử)
      */
     public function deleteStaff($id)
     {
-        $res = $this->execute_item("DELETE FROM users WHERE id = :id AND role = 'staff'", [':id' => (int)$id]);
-        $this->exportSqlDump();
-        return $res;
+        return $this->updateStaffStatus($id, 0);
     }
 }
