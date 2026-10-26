@@ -131,7 +131,7 @@ $user_tier = $_SESSION['tier'] ?? 'silver';
                         </ul>
                     </li>
                 <?php } else { ?>
-                    <li class="nav-item d-flex gap-2 ms-lg-2">
+                    <li class="nav-item d-flex align-items-center gap-2 ms-lg-2">
                         <a href="index.php?act=dangnhap" class="btn btn-outline-secondary btn-sm">Đăng nhập</a>
                         <a href="index.php?act=dangky" class="btn btn-bloom btn-sm">Đăng ký</a>
                     </li>

@@ -554,19 +554,6 @@ class QuanTriController extends BaseController
         $this->redirect('index.php?act=quanlysp');
     }
 
-    // ==============================================================
-    // 8. ĐỒNG BỘ CSDL CHO HOSTING (1-CLICK SYNC)
-    // ==============================================================
-    public function dongbodulieu()
-    {
-        $res = (new BaseModel())->exportSqlDump();
-        if ($res) {
-            $this->setFlashSuccess("Đồng bộ toàn bộ cơ sở dữ liệu mới nhất ra file 'bloomshop.sql' thành công! Dữ liệu đã sẵn sàng để đẩy lên hosting.");
-        } else {
-            $this->setFlashError("Không thể ghi file bloomshop.sql. Vui lòng kiểm tra quyền ghi thư mục.");
-        }
-        $this->redirect('index.php?act=quanlysp');
-    }
 
     // ==============================================================
     // 9. BÁO CÁO DOANH THU & THỐNG KÊ (ADMIN ONLY)

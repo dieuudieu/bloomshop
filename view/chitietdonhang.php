@@ -11,7 +11,7 @@
         <h2 class="fw-bold mb-0" style="color: #604b41;">
             Chi tiết đơn hàng #<?= $order['id'] ?>
         </h2>
-        <div class="d-flex gap-2">
+        <div class="d-flex align-items-center gap-2">
             <a href="index.php?act=theodoigiaohang&id=<?= $order['id'] ?>" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-truck"></i> Tiến trình giao
             </a>

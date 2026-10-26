@@ -7,9 +7,6 @@
             <p class="text-muted small mb-0">Xem danh sách, thêm hoa mới, sửa thông tin và giá khuyến mãi (Ràng buộc toàn vẹn hóa đơn)</p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
-            <a href="index.php?act=dongbodulieu" class="btn btn-outline-primary" title="Cập nhật toàn bộ CSDL ra bloomshop.sql sẵn sàng nạp lên Hosting">
-                <i class="bi bi-cloud-arrow-up me-1"></i> Đồng bộ SQL Hosting
-            </a>
             <a href="index.php?act=khuyenmai" class="btn btn-bloom-outline">
                 <i class="bi bi-tag-fill me-1"></i> Quản lý khuyến mãi
             </a>

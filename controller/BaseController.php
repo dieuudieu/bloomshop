@@ -49,7 +49,14 @@ class BaseController
         if (!empty($thanhcong)) {
             echo '<div class="container mt-3"><div class="alert alert-success alert-dismissible fade show" role="alert"><i class="bi bi-check-circle-fill me-2"></i>' . htmlspecialchars($thanhcong) . '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div></div>';
         }
+        // Đóng khung nội dung chính
+        echo '<main class="site-main">';
+
         include __DIR__ . "/../view/" . $view_file;
+
+        echo '</main>';
+
+        // Hiển thị footer
         include __DIR__ . "/../view/footer.php";
         exit;
     }

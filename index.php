@@ -69,7 +69,7 @@ $staff_allowed = [
     'quanlyvoucher', 'themvoucher', 'suavoucher', 'capnhatvoucher', 'xoavoucher',
     'quanlydanhgia', 'doitrangthaidanhgia', 'xoadanhgia',
     'quanlykh', 'khoakh',
-    'quanlydonhang', 'doitrangthaidonhang', 'duyettrahang', 'dongbodulieu'
+    'quanlydonhang', 'doitrangthaidonhang', 'duyettrahang',
 ];
 
 // Danh sách các chức năng chỉ dành riêng cho Admin tối cao
@@ -289,10 +289,7 @@ switch ($act) {
         (new QuanTriController())->doanhthu();
         break;
 
-    // Tự động đồng bộ CSDL ra bloomshop.sql cho Hosting
-    case 'dongbodulieu':
-        (new QuanTriController())->dongbodulieu();
-        break;
+    
 
     // --------------------------------------------------------------------------
     // PHÂN HỆ 5: KHÁCH HÀNG - SẢN PHẨM, TÌM KIẾM, CHI TIẾT & TRANG CHỦ
