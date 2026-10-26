@@ -566,51 +566,83 @@ a:hover {
 /* Nút điều hướng Carousel tinh gọn & thanh lịch */
 .hero-carousel-controls {
     position: absolute;
-    bottom: 18px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 10;
-    display: flex;
+    z-index: 20;
+    display: inline-flex;
     align-items: center;
     gap: 14px;
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(8px);
-    padding: 5px 12px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 6px 14px;
     border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    user-select: none;
 }
 .hero-arrow-btn {
     background: transparent;
     border: none;
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     color: #43322b;
-    font-size: 13px;
-    transition: all 0.2s;
+    font-size: 14px;
+    transition: all 0.25s ease;
     cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    outline: none;
+}
+.hero-arrow-btn i {
+    pointer-events: none;
+    transition: transform 0.2s ease;
 }
 .hero-arrow-btn:hover {
     background: var(--bloom-primary);
     color: #ffffff;
+    transform: scale(1.08);
+}
+.hero-arrow-btn:active {
+    transform: scale(0.92);
 }
 .hero-dash-indicators {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    padding: 0 2px;
 }
 .hero-dash-indicators button {
     width: 20px;
-    height: 4px;
-    border-radius: 2px;
+    height: 6px;
+    border-radius: 6px;
     background: #d5c4bc;
     border: none;
-    opacity: 0.6;
-    transition: all 0.3s ease;
+    opacity: 0.65;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    outline: none;
+}
+/* Mở rộng vùng chạm / click để người dùng bấm vào thanh chuyển cực nhạy và chuẩn xác */
+.hero-dash-indicators button::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    bottom: -10px;
+    left: -4px;
+    right: -4px;
+}
+.hero-dash-indicators button:hover:not(.active) {
+    opacity: 0.9;
+    background: #b8a69e;
 }
 .hero-dash-indicators button.active {
     width: 38px;

@@ -9,8 +9,8 @@
 <!-- 1. HERO SECTION: STUDIO HERO BANNER SLIDER TINH GỌN & SANG TRỌNG -->
 <section class="hero-banner-section py-4 py-lg-5">
     <div class="container">
-        <!-- Khung Hero Banner Studio Slider -->
-        <div id="bloomHeroCarousel" class="carousel slide carousel-fade hero-card-container position-relative overflow-hidden" data-bs-ride="carousel" data-bs-interval="4500">
+        <!-- Khung Hero Banner Studio Slider (Tự động chuyển mỗi 4s khi không tương tác) -->
+        <div id="bloomHeroCarousel" class="carousel slide carousel-fade hero-card-container position-relative overflow-hidden" data-bs-ride="carousel" data-bs-interval="4000" data-bs-pause="false">
             
             <div class="carousel-inner">
                 <!-- SLIDE 1: HOA HỒNG TÌNH YÊU -->
@@ -156,17 +156,17 @@
                 </div>
             </div>
 
-            <!-- Sleek Minimalist Controls -->
-            <div class="hero-carousel-controls">
-                <button class="hero-arrow-btn" type="button" data-bs-target="#bloomHeroCarousel" data-bs-slide="prev" title="Slide trước">
+            <!-- Sleek Minimalist Controls (Nút chuyển trang & thanh chỉ số bấm chuyển ngay) -->
+            <div class="hero-carousel-controls" aria-label="Điều hướng banner">
+                <button class="hero-arrow-btn" id="heroPrevBtn" type="button" data-bs-target="#bloomHeroCarousel" data-bs-slide="prev" aria-label="Slide trước" title="Slide trước">
                     <i class="bi bi-arrow-left"></i>
                 </button>
-                <div class="hero-dash-indicators">
-                    <button type="button" data-bs-target="#bloomHeroCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
-                    <button type="button" data-bs-target="#bloomHeroCarousel" data-bs-slide-to="1"></button>
-                    <button type="button" data-bs-target="#bloomHeroCarousel" data-bs-slide-to="2"></button>
+                <div class="hero-dash-indicators" id="heroDashIndicators">
+                    <button type="button" data-bs-target="#bloomHeroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Chuyển đến Slide 1" title="Slide 1"></button>
+                    <button type="button" data-bs-target="#bloomHeroCarousel" data-bs-slide-to="1" aria-label="Chuyển đến Slide 2" title="Slide 2"></button>
+                    <button type="button" data-bs-target="#bloomHeroCarousel" data-bs-slide-to="2" aria-label="Chuyển đến Slide 3" title="Slide 3"></button>
                 </div>
-                <button class="hero-arrow-btn" type="button" data-bs-target="#bloomHeroCarousel" data-bs-slide="next" title="Slide tiếp theo">
+                <button class="hero-arrow-btn" id="heroNextBtn" type="button" data-bs-target="#bloomHeroCarousel" data-bs-slide="next" aria-label="Slide tiếp theo" title="Slide tiếp theo">
                     <i class="bi bi-arrow-right"></i>
                 </button>
             </div>
@@ -237,7 +237,7 @@
      Slider chuyển động tự động giữa Khối hoa 1 và Khối hoa 2
      ============================================================== -->
 <section class="container my-5">
-    <div id="middlePromoCarousel" class="carousel slide shadow-sm rounded-4 overflow-hidden middle-promo-slider" data-bs-ride="carousel" data-bs-interval="4000">
+    <div id="middlePromoCarousel" class="carousel slide shadow-sm rounded-4 overflow-hidden middle-promo-slider" data-bs-ride="carousel" data-bs-interval="4000" data-bs-pause="false">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#middlePromoCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
             <button type="button" data-bs-target="#middlePromoCarousel" data-bs-slide-to="1"></button>
