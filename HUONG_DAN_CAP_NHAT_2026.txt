@@ -1,0 +1,24 @@
+BLOOMSHOP (3) - CAP NHAT TON KHO & TRA HANG - MVC OOP
+
+1. Giai nen toan bo ZIP vao C:\xampp\htdocs\bloomshop\ (hoac ten folder ban muon).
+2. File model/config.php co local DB bloomshop / root / mat khau rong.
+   Neu ten DB khac, sua config.php.
+3. Neu ban da import bloomshop.sql TU ZIP NAY, cac cot so_luong, stock_deducted,
+   inventory_restored, voucher_restored, return_reason, return_requested_at
+   va cac trang thai tra hang DA TON TAI. KHONG import lai SQL neu DB dang co du lieu.
+4. Vao Admin -> Quan ly san pham -> Sua san pham, nhap ton kho thuc te.
+   San pham cu co the dang ton 0.
+5. Test: them vao gio, dat hang, kiem tra ton kho giam; huy don cho xac nhan
+   kiem tra ton kho tang va voucher hoan luot.
+6. Test tra hang: tai khoan khach vao Lich su don hang, don da giao/thanh cong,
+   nhap ly do va gui yeu cau. Admin -> Quan ly don hang -> Duyet/Tu choi.
+7. Tra hang la tra TOAN BO don. Duyet tra hang se hoan ton kho va luot voucher.
+   KHONG tu dong hoan tien qua ngan hang/vi dien tu.
+8. Bao ve: danh muc con san pham khong xoa duoc; san pham da co chi tiet don
+   khong xoa duoc. Da co logic chan trong model cua source goc.
+9. Don hang cu co stock_deducted=0 se KHONG duoc hoan ton kho khi tra,
+   de tranh cong them ton kho cho don chua tung tru kho.
+10. Sao luu DATABASE va SOURCE truoc khi dua len hosting. Test tren XAMPP truoc.
+
+CHU Y: SQL dump bloomshop.sql trong source co the chua du lieu tai khoan/khach hang
+cua ban; khong chia se file do cong khai. Khong dua .git len hosting.

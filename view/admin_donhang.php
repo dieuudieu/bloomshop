@@ -82,6 +82,9 @@
                                     elseif ($st == 'dang_giao') { $badge = 'bg-primary'; $txt = 'Đang giao'; }
                                     elseif ($st == 'da_giao') { $badge = 'bg-info text-white'; $txt = 'Đã giao'; }
                                     elseif ($st == 'thanh_cong') { $badge = 'bg-success'; $txt = 'Thành công'; }
+                                    elseif ($st == 'yeu_cau_tra') { $badge='bg-warning text-dark'; $txt='Chờ duyệt trả hàng'; }
+                                    elseif ($st == 'da_tra_hang') { $badge='bg-secondary'; $txt='Đã trả hàng'; }
+                                    elseif ($st == 'tu_choi_tra') { $badge='bg-danger'; $txt='Từ chối trả hàng'; }
                                     elseif ($st == 'da_huy') { $badge = 'bg-danger'; $txt = 'Đã hủy'; }
                                 ?>
                                 <span class="badge <?= $badge ?> px-2 py-1"><?= $txt ?></span>
@@ -111,6 +114,14 @@
                                         ];
                                     }
                                 ?>
+                                <?php if ($st === 'yeu_cau_tra') { ?>
+                                    <div class="small mb-2"><strong>Lý do:</strong> <?= htmlspecialchars($dh['return_reason'] ?? '') ?></div>
+                                    <form method="POST" action="index.php?act=duyettrahang" class="d-flex gap-1" onsubmit="return confirm('Xác nhận xử lý trả hàng?')">
+                                        <input type="hidden" name="order_id" value="<?= (int)$dh['id'] ?>">
+                                        <button type="submit" name="return_action" value="approve" class="btn btn-success btn-sm">Duyệt trả hàng</button>
+                                        <button type="submit" name="return_action" value="reject" class="btn btn-danger btn-sm">Từ chối</button>
+                                    </form>
+                                <?php } ?>
                                 <?php if (!empty($next_steps)) { ?>
                                     <form method="POST" action="index.php?act=doitrangthaidonhang" class="d-flex gap-1 align-items-center">
                                         <input type="hidden" name="order_id" value="<?= $dh['id'] ?>">

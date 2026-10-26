@@ -367,12 +367,11 @@ class QuanTriController extends BaseController
 
             $desc = $status_desc[$new_status] ?? 'Trạng thái đơn hàng được cập nhật.';
 
-            // Cập nhật trạng thái và ghi nhật ký tracking
-            $this->donHangModel->updateOrderStatus($order_id, $new_status, $desc);
-
-            // Nếu đơn bị hủy, hoàn lại lượt voucher
-            if ($new_status === 'da_huy' && !empty($order['voucher_code'])) {
-                $this->voucherModel->decrementUsedCount($order['voucher_code']);
+            try {
+                $this->donHangModel->changeStatusSafely($order_id, $current_status, $new_status, $desc);
+            } catch (Throwable $e) {
+                $this->setFlashError($e->getMessage());
+                $this->redirect('index.php?act=quanlydonhang');
             }
 
             // Tự động thăng hạng khách hàng khi đơn thành công
@@ -457,13 +456,14 @@ class QuanTriController extends BaseController
             $is_sale = isset($_POST['is_sale']) ? 1 : 0;
             $description = trim($this->post('description', ''));
             $id_dm = (int)$this->post('id_dm', 0);
+            $so_luong = max(0, (int)$this->post('so_luong', 0));
 
             $uploadedImage = $this->uploadProductImage('image');
 
             if ($uploadedImage === false) {
                 $this->loi = 'Vui lòng chọn ảnh JPG, PNG hoặc WebP hợp lệ.';
             } elseif ($uploadedImage !== null) {
-                $this->sanPhamModel->createProduct($name, $price, $sale_price, $is_sale, $description, $uploadedImage, $id_dm);
+                $this->sanPhamModel->createProduct($name, $price, $sale_price, $is_sale, $description, $uploadedImage, $id_dm, $so_luong);
                 $this->setFlashSuccess("Thêm sản phẩm hoa mới thành công!");
                 $this->redirect('index.php?act=quanlysp');
             } else {
@@ -495,6 +495,7 @@ class QuanTriController extends BaseController
             $is_sale = isset($_POST['is_sale']) ? 1 : 0;
             $description = trim($this->post('description', ''));
             $id_dm = (int)$this->post('id_dm', 0);
+            $so_luong = max(0, (int)$this->post('so_luong', 0));
 
             // Kiểm tra có upload ảnh mới không
             if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
@@ -503,9 +504,9 @@ class QuanTriController extends BaseController
                     $this->setFlashError("Ảnh tải lên không hợp lệ (chỉ hỗ trợ JPG, PNG, WebP).");
                     $this->redirect("index.php?act=suasp&id=$id");
                 }
-                $this->sanPhamModel->updateProduct($id, $name, $price, $sale_price, $is_sale, $description, $id_dm, $newImage);
+                $this->sanPhamModel->updateProduct($id, $name, $price, $sale_price, $is_sale, $description, $id_dm, $newImage, $so_luong);
             } else {
-                $this->sanPhamModel->updateProduct($id, $name, $price, $sale_price, $is_sale, $description, $id_dm, null);
+                $this->sanPhamModel->updateProduct($id, $name, $price, $sale_price, $is_sale, $description, $id_dm, null, $so_luong);
             }
 
             $this->setFlashSuccess("Cập nhật thông tin sản phẩm thành công!");

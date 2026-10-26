@@ -26,6 +26,8 @@ $has_sale = (!empty($sp['is_sale']) && $sale_price > 0 && $sale_price < $price);
 $current_price = $has_sale ? $sale_price : $price;
 $discount_pct = ($has_sale && $price > 0) ? round((($price - $sale_price) / $price) * 100) : 0;
 $count_reviews = count($danhsach_danhgia);
+$ton_kho = max(0, (int)($sp['so_luong'] ?? 0));
+$het_hang = ($ton_kho <= 0);
 ?>
 <div class="container my-5">
     <!-- Breadcrumb điều hướng -->
@@ -100,27 +102,95 @@ $count_reviews = count($danhsach_danhgia);
                 </p>
             </div>
 
-            <!-- Form Mua hàng / Thêm vào giỏ hàng -->
-            <form method="POST" action="index.php?act=themgiohang" class="mb-4">
-                <input type="hidden" name="id" value="<?= $sp['id'] ?>">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <label class="form-label mb-0 fw-semibold">Số lượng:</label>
-                    <div class="input-group" style="width: 130px;">
-                        <button class="btn btn-outline-secondary" type="button" onclick="changeQty(-1)">-</button>
-                        <input type="number" id="buy_qty" name="qty" class="form-control text-center" value="1" min="1" max="99">
-                        <button class="btn btn-outline-secondary" type="button" onclick="changeQty(1)">+</button>
+            
+            <!-- Hiển thị trạng thái tồn kho -->
+            <div class="mb-3">
+                <?php if ($het_hang): ?>
+                    <span class="badge bg-danger px-3 py-2">
+                        <i class="bi bi-x-circle me-1"></i> HẾT HÀNG
+                    </span>
+                <?php else: ?>
+                    <span class="text-success fw-semibold">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Còn <?= $ton_kho ?> sản phẩm
+                    </span>
+                <?php endif; ?>
+            </div>
+
+            <?php if (!$het_hang): ?>
+
+                <!-- Chỉ hiển thị form mua khi còn hàng -->
+                <form method="POST"
+                    action="index.php?act=themgiohang"
+                    class="mb-4">
+
+                    <input type="hidden"
+                        name="id"
+                        value="<?= (int)$sp['id'] ?>">
+
+                    <div class="d-flex align-items-center gap-3 mb-3">
+
+                        <label class="form-label mb-0 fw-semibold">
+                            Số lượng:
+                        </label>
+
+                        <div class="input-group" style="width: 130px;">
+
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    onclick="changeQty(-1)">
+                                -
+                            </button>
+
+                            <input type="number"
+                                id="buy_qty"
+                                name="qty"
+                                class="form-control text-center"
+                                value="1"
+                                min="1"
+                                max="<?= $ton_kho ?>"
+                                required>
+
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    onclick="changeQty(1)">
+                                +
+                            </button>
+
+                        </div>
                     </div>
+
+                    <div class="d-flex gap-3">
+
+                        <button type="submit"
+                                name="themgiohang"
+                                value="1"
+                                class="btn btn-bloom-outline btn-lg flex-fill">
+                            <i class="bi bi-cart-plus me-1"></i>
+                            Thêm vào giỏ
+                        </button>
+
+                        <button type="submit"
+                                name="muangay"
+                                value="1"
+                                class="btn btn-bloom btn-lg flex-fill">
+                            <i class="bi bi-lightning-charge me-1"></i>
+                            Mua ngay
+                        </button>
+
+                    </div>
+                </form>
+
+            <?php else: ?>
+
+                <!-- Sản phẩm hết hàng -->
+                <div class="alert alert-secondary rounded-3 mb-4">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Sản phẩm hiện đã hết hàng. Vui lòng quay lại sau!
                 </div>
 
-                <div class="d-flex gap-3">
-                    <button type="submit" name="themgiohang" value="1" class="btn btn-bloom-outline btn-lg flex-fill">
-                        <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
-                    </button>
-                    <button type="submit" name="muangay" value="1" class="btn btn-bloom btn-lg flex-fill">
-                        <i class="bi bi-lightning-charge me-1"></i> Mua ngay
-                    </button>
-                </div>
-            </form>
+            <?php endif; ?>
+
 
             <!-- Cam kết dịch vụ -->
             <div class="card bg-light border-0 p-3 small text-muted rounded-3">
@@ -250,14 +320,26 @@ $count_reviews = count($danhsach_danhgia);
 </div>
 
 <script>
+
 function changeQty(delta) {
-    var input = document.getElementById('buy_qty');
-    if (input) {
-        var val = parseInt(input.value) || 1;
-        val += delta;
-        if (val < 1) val = 1;
-        if (val > 99) val = 99;
-        input.value = val;
+    const input = document.getElementById('buy_qty');
+
+    if (!input) return;
+
+    const maxQty = parseInt(input.max, 10);
+    let qty = parseInt(input.value, 10) || 1;
+
+    qty += delta;
+
+    if (qty < 1) {
+        qty = 1;
     }
+
+    if (qty > maxQty) {
+        qty = maxQty;
+    }
+
+    input.value = qty;
 }
+
 </script>

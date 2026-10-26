@@ -38,6 +38,7 @@
                 </div>
             </div>
 
+            <div class="mb-3"><label class="form-label fw-semibold">Số lượng tồn kho</label><input type="number" name="so_luong" min="0" value="0" class="form-control" required></div>
             <div class="mb-3">
                 <label class="form-label fw-semibold">Mô tả chi tiết</label>
                 <textarea name="description" rows="3" class="form-control" placeholder="Ý nghĩa của hoa, số lượng cành, dịp tặng phù hợp..."></textarea>

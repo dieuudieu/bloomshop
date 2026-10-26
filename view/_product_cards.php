@@ -4,6 +4,8 @@
             $has_sale = (!empty($sp['is_sale']) && !empty($sp['sale_price']) && $sp['sale_price'] < $sp['price']);
             $current_price = $has_sale ? $sp['sale_price'] : $sp['price'];
             $discount_pct = $has_sale ? round((($sp['price'] - $sp['sale_price']) / $sp['price']) * 100) : 0;
+            $ton_kho = max(0, (int)($sp['so_luong'] ?? 0));
+            $het_hang = ($ton_kho <= 0);
         ?>
             <div class="col-6 col-md-4 col-lg-3">
                 <div class="card h-100 product-card position-relative border-0 shadow-sm">
@@ -34,13 +36,42 @@
                                 <a href="index.php?act=chitiettsp&id=<?= $sp['id'] ?>" class="btn btn-outline-secondary btn-sm flex-fill px-1 px-md-2 text-nowrap">
                                     Chi tiết
                                 </a>
-                                <form method="POST" action="index.php?act=themgiohang" class="m-0 flex-fill">
-                                    <input type="hidden" name="id" value="<?= $sp['id'] ?>">
-                                    <input type="hidden" name="qty" value="1">
-                                    <button type="submit" name="themgiohang" class="btn btn-bloom btn-sm w-100 px-1 px-md-2 text-nowrap" title="Thêm vào giỏ hàng">
-                                        <i class="bi bi-cart-plus"></i> <span class="d-none d-sm-inline">Mua</span>
+                                                                
+                                <?php if (!$het_hang): ?>
+
+                                    <form method="POST"
+                                        action="index.php?act=themgiohang"
+                                        class="m-0 flex-fill">
+
+                                        <input type="hidden"
+                                            name="id"
+                                            value="<?= (int)$sp['id'] ?>">
+
+                                        <input type="hidden"
+                                            name="qty"
+                                            value="1">
+
+                                        <button type="submit"
+                                                name="themgiohang"
+                                                class="btn btn-bloom btn-sm w-100 px-1 px-md-2 text-nowrap">
+
+                                            <i class="bi bi-cart-plus"></i>
+                                            <span class="d-none d-sm-inline">Mua</span>
+                                        </button>
+                                    </form>
+
+                                <?php else: ?>
+
+                                    <button type="button"
+                                            class="btn btn-outline-secondary btn-sm flex-fill"
+                                            disabled>
+
+                                        <i class="bi bi-cart-x"></i>
+                                        Hết hàng
                                     </button>
-                                </form>
+
+                                <?php endif; ?>
+
                             </div>
                         </div>
                     </div>

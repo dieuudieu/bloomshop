@@ -122,10 +122,10 @@ class SanPhamModel extends BaseModel
     /**
      * Thêm mới sản phẩm (Admin)
      */
-    public function createProduct($name, $price, $sale_price, $is_sale, $description, $image, $id_dm)
+    public function createProduct($name, $price, $sale_price, $is_sale, $description, $image, $id_dm, $so_luong = 0)
     {
-        $sql = "INSERT INTO sanpham (name, price, sale_price, is_sale, description, image, id_dm)
-                VALUES (:name, :price, :sale_price, :is_sale, :description, :image, :id_dm)";
+        $sql = "INSERT INTO sanpham (name, price, sale_price, is_sale, description, image, id_dm, so_luong)
+                VALUES (:name, :price, :sale_price, :is_sale, :description, :image, :id_dm, :so_luong)";
         $res = $this->execute_item($sql, [
             ':name' => $name,
             ':price' => $price,
@@ -133,7 +133,8 @@ class SanPhamModel extends BaseModel
             ':is_sale' => $is_sale,
             ':description' => $description,
             ':image' => $image,
-            ':id_dm' => $id_dm
+            ':id_dm' => $id_dm,
+            ':so_luong' => max(0, (int)$so_luong)
         ]);
         $this->exportSqlDump();
         return $res;
@@ -142,7 +143,7 @@ class SanPhamModel extends BaseModel
     /**
      * Cập nhật thông tin sản phẩm (Admin)
      */
-    public function updateProduct($id, $name, $price, $sale_price, $is_sale, $description, $id_dm, $image = null)
+    public function updateProduct($id, $name, $price, $sale_price, $is_sale, $description, $id_dm, $image = null, $so_luong = 0)
     {
         if ($image !== null) {
             // Xóa file ảnh cũ nếu có
@@ -154,7 +155,7 @@ class SanPhamModel extends BaseModel
                 }
             }
 
-            $sql = "UPDATE sanpham SET name=:name, price=:price, sale_price=:sale_price, is_sale=:is_sale, description=:description, image=:image, id_dm=:id_dm WHERE id=:id";
+            $sql = "UPDATE sanpham SET name=:name, price=:price, sale_price=:sale_price, is_sale=:is_sale, description=:description, image=:image, id_dm=:id_dm, so_luong=:so_luong WHERE id=:id";
             $res = $this->execute_item($sql, [
                 ':name' => $name,
                 ':price' => $price,
@@ -163,10 +164,11 @@ class SanPhamModel extends BaseModel
                 ':description' => $description,
                 ':image' => $image,
                 ':id_dm' => $id_dm,
+            ':so_luong' => max(0, (int)$so_luong),
                 ':id' => $id
             ]);
         } else {
-            $sql = "UPDATE sanpham SET name=:name, price=:price, sale_price=:sale_price, is_sale=:is_sale, description=:description, id_dm=:id_dm WHERE id=:id";
+            $sql = "UPDATE sanpham SET name=:name, price=:price, sale_price=:sale_price, is_sale=:is_sale, description=:description, id_dm=:id_dm, so_luong=:so_luong WHERE id=:id";
             $res = $this->execute_item($sql, [
                 ':name' => $name,
                 ':price' => $price,
@@ -174,6 +176,7 @@ class SanPhamModel extends BaseModel
                 ':is_sale' => $is_sale,
                 ':description' => $description,
                 ':id_dm' => $id_dm,
+            ':so_luong' => max(0, (int)$so_luong),
                 ':id' => $id
             ]);
         }

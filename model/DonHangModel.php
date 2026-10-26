@@ -4,6 +4,103 @@ require_once __DIR__ . '/BaseModel.php';
 
 class DonHangModel extends BaseModel
 {
+    /** Giao dịch đặt hàng: khóa tồn kho, lưu đơn, trừ kho và voucher một lần. */
+    public function placeOrderSafely($data, $cart_items, $voucher_id = null)
+    {
+        $conn = $this->get_conn();
+        $conn->beginTransaction();
+        try {
+            foreach ($cart_items as $item) {
+                $id = (int)$item['id'];
+                $qty = (int)$item['qty'];
+                if ($qty <= 0) throw new RuntimeException('Số lượng đặt không hợp lệ.');
+                $q = $conn->prepare('SELECT so_luong FROM sanpham WHERE id = ? FOR UPDATE');
+                $q->execute([$id]);
+                $stock = $q->fetchColumn();
+                if ($stock === false || (int)$stock < $qty) {
+                    throw new RuntimeException('Sản phẩm #' . $id . ' không đủ tồn kho (còn ' . (int)$stock . ').');
+                }
+            }
+            if ($voucher_id) {
+                $q = $conn->prepare('UPDATE vouchers SET used_count = used_count + 1 WHERE id = ? AND used_count < quantity AND status = 1 AND expiry_date >= CURDATE()');
+                $q->execute([(int)$voucher_id]);
+                if ($q->rowCount() !== 1) throw new RuntimeException('Voucher đã hết lượt hoặc không còn hiệu lực.');
+            }
+            $id = $this->createOrder($data);
+            $saved = $this->createOrderItems($id, $cart_items);
+            foreach ($cart_items as $item) {
+                $q = $conn->prepare('UPDATE sanpham SET so_luong = so_luong - ? WHERE id = ? AND so_luong >= ?');
+                $q->execute([(int)$item['qty'], (int)$item['id'], (int)$item['qty']]);
+                if ($q->rowCount() !== 1) throw new RuntimeException('Tồn kho vừa thay đổi, vui lòng thử lại.');
+            }
+            $this->execute_item('UPDATE donhang SET stock_deducted=1 WHERE id=:id', [':id'=>$id]);
+            $this->addTracking($id, 'cho_xac_nhan', 'Đơn hàng mới được tạo, đã trừ tồn kho.');
+            $conn->commit();
+            return [$id, $saved];
+        } catch (Throwable $e) {
+            if ($conn->inTransaction()) $conn->rollBack();
+            throw $e;
+        }
+    }
+
+    /** Đổi trạng thái có khóa dòng, hoàn kho và voucher đúng một lần. */
+    public function changeStatusSafely($id, $expected, $next, $description = '')
+    {
+        $conn = $this->get_conn();
+        $conn->beginTransaction();
+        try {
+            $q = $conn->prepare('SELECT * FROM donhang WHERE id=? FOR UPDATE');
+            $q->execute([(int)$id]);
+            $order = $q->fetch(PDO::FETCH_ASSOC);
+            if (!$order || $order['status'] !== $expected) throw new RuntimeException('Trạng thái đơn đã thay đổi, vui lòng tải lại.');
+            $valid = [
+                'cho_xac_nhan'=>['xac_nhan','da_huy'],
+                'xac_nhan'=>['dang_giao','da_huy'],
+                'dang_giao'=>['da_giao','da_huy'],
+                'da_giao'=>['thanh_cong','yeu_cau_tra'],
+                'thanh_cong'=>['yeu_cau_tra'],
+                'yeu_cau_tra'=>['da_tra_hang','tu_choi_tra'],
+                'tu_choi_tra'=>['yeu_cau_tra']
+            ];
+            if (!in_array($next, $valid[$expected] ?? [], true)) throw new RuntimeException('Chuyển trạng thái không hợp lệ.');
+            if (in_array($next, ['da_huy','da_tra_hang'], true)) {
+                if ((int)$order['stock_deducted'] === 1 && (int)$order['inventory_restored'] === 0) {
+                    $items = $this->getOrderItems($id);
+                    foreach ($items as $item) {
+                        $this->execute_item('UPDATE sanpham SET so_luong=so_luong+:qty WHERE id=:id', [':qty'=>(int)$item['quantity'], ':id'=>(int)$item['product_id']]);
+                    }
+                    $this->execute_item('UPDATE donhang SET inventory_restored=1 WHERE id=:id', [':id'=>$id]);
+                }
+                if (!empty($order['voucher_code']) && (int)$order['voucher_restored'] === 0) {
+                    $this->execute_item('UPDATE vouchers SET used_count=GREATEST(0,used_count-1) WHERE code=:code', [':code'=>$order['voucher_code']]);
+                    $this->execute_item('UPDATE donhang SET voucher_restored=1 WHERE id=:id', [':id'=>$id]);
+                }
+            }
+            $this->execute_item('UPDATE donhang SET status=:status WHERE id=:id', [':status'=>$next, ':id'=>$id]);
+            if ($description !== '') $this->addTracking($id, $next, $description);
+            $conn->commit();
+        } catch (Throwable $e) {
+            if ($conn->inTransaction()) $conn->rollBack();
+            throw $e;
+        }
+    }
+
+    public function requestReturn($id, $user_id, $reason)
+    {
+        $conn = $this->get_conn();
+        $conn->beginTransaction();
+        try {
+            $q = $conn->prepare("UPDATE donhang SET status='yeu_cau_tra', return_reason=:reason, return_requested_at=NOW() WHERE id=:id AND user_id=:uid AND status IN ('da_giao','thanh_cong','tu_choi_tra')");
+            $q->execute([':reason'=>$reason, ':id'=>(int)$id, ':uid'=>(int)$user_id]);
+            if ($q->rowCount() !== 1) throw new RuntimeException('Đơn hàng không đủ điều kiện yêu cầu trả.');
+            $this->addTracking($id,'yeu_cau_tra','Khách yêu cầu trả hàng: '.$reason);
+            $conn->commit();
+        } catch (Throwable $e) {
+            if ($conn->inTransaction()) $conn->rollBack();
+            throw $e;
+        }
+    }
+
     /**
      * Tạo đơn hàng mới trong CSDL
      */
@@ -49,12 +146,12 @@ class DonHangModel extends BaseModel
 
             $saved_items[] = [
                 'product_name' => $it['name'],
+                'product_image' => $it['image'],
                 'quantity' => (int)$it['qty'],
                 'price' => (float)$it['price'],
                 'total' => $item_total
             ];
         }
-        $this->exportSqlDump();
         return $saved_items;
     }
 

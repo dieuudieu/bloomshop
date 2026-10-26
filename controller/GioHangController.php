@@ -46,6 +46,11 @@ class GioHangController extends BaseController
         $qty = max(1, (int)$this->post('qty', 1));
 
         $sp = $this->sanPhamModel->getProductById($id);
+        $current = (int)($_SESSION['cart'][$id]['qty'] ?? 0);
+        if (!$sp || (int)$sp['so_luong'] < $current + $qty) {
+            $this->setFlashError('Sản phẩm không đủ tồn kho.');
+            $this->redirect('index.php?act=giohang');
+        }
         if ($sp) {
             $this->gioHangModel->addItem($id, $qty, $sp);
 
@@ -64,7 +69,12 @@ class GioHangController extends BaseController
         $id = (int)$this->post('id', 0);
         $action = $this->post('action', '');
 
-        $this->gioHangModel->updateItemQty($id, $action);
+        $sp = $this->sanPhamModel->getProductById($id);
+        if ($action === 'increase' && (!$sp || (int)$sp['so_luong'] <= (int)($_SESSION['cart'][$id]['qty'] ?? 0))) {
+            $this->setFlashError('Đã đạt số lượng tồn kho.');
+        } else {
+            $this->gioHangModel->updateItemQty($id, $action);
+        }
         $this->redirect('index.php?act=giohang');
     }
 
@@ -186,39 +196,25 @@ class GioHangController extends BaseController
 
         $total_price = max(0, $subtotal - $discount_amount);
 
-        // Lưu đơn hàng vào Database
-        $order_id = $this->donHangModel->createOrder([
-            'user_id' => $user_id,
-            'name' => $customer_name,
-            'email' => $customer_email,
-            'phone' => $customer_phone,
-            'address' => $customer_address,
-            'note' => $note,
-            'subtotal' => $subtotal,
-            'voucher' => $voucher_code,
-            'discount' => $discount_amount,
-            'total' => $total_price,
-            'payment' => $payment_method
-        ]);
-
-        // Lưu chi tiết các sản phẩm trong đơn
-        $order_items = $this->donHangModel->createOrderItems($order_id, $cart_items);
-
-        // Tăng số lượt đã dùng của voucher nếu có
-        if ($voucher_id) {
-            $this->voucherModel->incrementUsedCount($voucher_id);
+        try {
+            [$order_id, $order_items] = $this->donHangModel->placeOrderSafely([
+                'user_id' => $user_id, 'name' => $customer_name, 'email' => $customer_email,
+                'phone' => $customer_phone, 'address' => $customer_address, 'note' => $note,
+                'subtotal' => $subtotal, 'voucher' => $voucher_code,
+                'discount' => $discount_amount, 'total' => $total_price, 'payment' => $payment_method
+            ], $cart_items, $voucher_id);
+        } catch (Throwable $e) {
+            $this->setFlashError($e->getMessage());
+            $this->redirect('index.php?act=giohang');
         }
-
-        // Ghi nhận mốc tracking ban đầu
-        $this->donHangModel->addTracking(
-            $order_id,
-            'cho_xac_nhan',
-            'Đơn hàng mới được tạo thành công, đang chờ BloomShop xác nhận.'
-        );
 
         // Gửi email hóa đơn tự động
         $order_info = $this->donHangModel->getOrderById($order_id);
-        Mailer::send_order_invoice($order_info, $order_items);
+        try {
+            Mailer::send_order_invoice($order_info, $order_items);
+        } catch (Throwable $e) {
+            error_log('BloomShop mail failed after order #' . $order_id . ': ' . $e->getMessage());
+        }
 
         // Xóa giỏ hàng sau khi đặt thành công
         $this->gioHangModel->clear();

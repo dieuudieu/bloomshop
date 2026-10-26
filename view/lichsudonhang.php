@@ -53,6 +53,9 @@
                                     $badge_class = 'bg-success';
                                     $status_text = 'Thành công';
                                     break;
+                                case 'yeu_cau_tra': $badge_class='bg-warning text-dark'; $status_text='Chờ duyệt trả hàng'; break;
+                                case 'da_tra_hang': $badge_class='bg-secondary'; $status_text='Đã trả hàng'; break;
+                                case 'tu_choi_tra': $badge_class='bg-danger'; $status_text='Từ chối trả hàng'; break;
                                 case 'da_huy':
                                     $badge_class = 'bg-danger';
                                     $status_text = 'Đã hủy';
@@ -83,6 +86,13 @@
                                         <a href="index.php?act=chitietdonhang&id=<?= $dh['id'] ?>" class="btn btn-outline-secondary btn-sm" title="Xem chi tiết đơn hàng">
                                             <i class="bi bi-eye"></i> Chi tiết
                                         </a>
+                                            <?php if (in_array($st, ['da_giao','thanh_cong','tu_choi_tra'], true)) { ?>
+                                            <form method="POST" action="index.php?act=yeucautrahang" class="d-inline" onsubmit="return confirm('Gửi yêu cầu trả hàng cho Admin?')">
+                                                <input type="hidden" name="order_id" value="<?= (int)$dh['id'] ?>">
+                                                <input type="text" name="return_reason" minlength="5" maxlength="1000" placeholder="Lý do trả hàng" required class="form-control form-control-sm mb-1">
+                                                <button class="btn btn-outline-warning btn-sm" type="submit">Yêu cầu trả hàng</button>
+                                            </form>
+                                            <?php } ?>
                                         <?php if ($st == 'cho_xac_nhan') { ?>
                                             <form method="POST" action="index.php?act=huydonhang" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #<?= $dh['id'] ?> này?')">
                                                 <input type="hidden" name="order_id" value="<?= $dh['id'] ?>">

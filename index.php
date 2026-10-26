@@ -50,7 +50,7 @@ $staff_allowed = [
     'quanlyvoucher', 'themvoucher', 'suavoucher', 'capnhatvoucher', 'xoavoucher',
     'quanlydanhgia', 'doitrangthaidanhgia', 'xoadanhgia',
     'quanlykh', 'khoakh',
-    'quanlydonhang', 'doitrangthaidonhang', 'dongbodulieu'
+    'quanlydonhang', 'doitrangthaidonhang', 'duyettrahang', 'dongbodulieu'
 ];
 
 // Danh sách các chức năng chỉ dành riêng cho Admin tối cao
@@ -139,6 +139,12 @@ switch ($act) {
         break;
     case 'inhoadon':
         (new DonHangController())->inHoaDon();
+        break;
+    case 'yeucautrahang':
+        (new DonHangController())->yeuCauTraHang();
+        break;
+    case 'duyettrahang':
+        (new DonHangController())->duyetTraHang();
         break;
     case 'huydonhang':
         (new DonHangController())->huyDonHang();

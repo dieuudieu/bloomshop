@@ -38,14 +38,12 @@ class DonHangController extends BaseController
 
         if ($order && $order['status'] === 'cho_xac_nhan') {
             $actor = (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') ? 'Quản trị viên' : 'Khách hàng';
-            $this->donHangModel->updateOrderStatus($order_id, 'da_huy', "$actor đã hủy đơn hàng.");
-
-            // Hoàn lại lượt dùng voucher nếu có
-            if (!empty($order['voucher_code'])) {
-                $this->voucherModel->decrementUsedCount($order['voucher_code']);
+            try {
+                $this->donHangModel->changeStatusSafely($order_id, 'cho_xac_nhan', 'da_huy', "$actor đã hủy đơn hàng.");
+                $this->setFlashSuccess("Đã hủy đơn hàng #$order_id và hoàn tồn kho/voucher.");
+            } catch (Throwable $e) {
+                $this->setFlashError($e->getMessage());
             }
-
-            $this->setFlashSuccess("Đã hủy đơn hàng #$order_id thành công.");
         } else {
             $st_hientai = $order ? $order['status'] : '';
             if (in_array($st_hientai, ['xac_nhan', 'dang_giao'])) {
@@ -60,6 +58,36 @@ class DonHangController extends BaseController
         } else {
             $this->redirect('index.php?act=lichsudonhang');
         }
+    }
+
+    public function yeuCauTraHang()
+    {
+        if (!$this->isPost() || !isset($_SESSION['id'])) $this->redirect('index.php?act=dangnhap');
+        $id = (int)$this->post('order_id', 0);
+        $reason = trim($this->post('return_reason', ''));
+        if (mb_strlen($reason) < 5 || mb_strlen($reason) > 1000) {
+            $this->setFlashError('Lý do trả hàng phải từ 5 đến 1000 ký tự.');
+        } else {
+            try {
+                $this->donHangModel->requestReturn($id, $_SESSION['id'], $reason);
+                $this->setFlashSuccess('Đã gửi yêu cầu trả hàng. Vui lòng chờ Admin duyệt.');
+            } catch (Throwable $e) { $this->setFlashError($e->getMessage()); }
+        }
+        $this->redirect('index.php?act=lichsudonhang');
+    }
+
+    public function duyetTraHang()
+    {
+        if (!$this->isPost() || !in_array($_SESSION['role'] ?? '', ['admin','staff'], true)) $this->redirect('index.php?act=trangchu');
+        $id = (int)$this->post('order_id', 0);
+        $action = $this->post('return_action', '');
+        $next = $action === 'approve' ? 'da_tra_hang' : ($action === 'reject' ? 'tu_choi_tra' : '');
+        if ($next === '') $this->redirect('index.php?act=quanlydonhang');
+        try {
+            $this->donHangModel->changeStatusSafely($id, 'yeu_cau_tra', $next, $next === 'da_tra_hang' ? 'Admin duyệt trả hàng, hoàn tồn kho và voucher.' : 'Admin từ chối yêu cầu trả hàng.');
+            $this->setFlashSuccess('Đã xử lý yêu cầu trả hàng #' . $id);
+        } catch (Throwable $e) { $this->setFlashError($e->getMessage()); }
+        $this->redirect('index.php?act=quanlydonhang');
     }
 
     /**

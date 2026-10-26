@@ -31,6 +31,7 @@
                         <th>Giá gốc</th>
                         <th>Giá khuyến mãi</th>
                         <th>Trạng thái Sale</th>
+                        <th>Tồn kho</th>
                         <th class="text-center">Đơn hàng liên kết</th>
                         <th class="text-center">Thao tác</th>
                     </tr>
@@ -68,6 +69,7 @@
                                     <span class="badge bg-light text-muted border">Bình thường</span>
                                 <?php } ?>
                             </td>
+                            <td><span class="badge <?= (int)$sp['so_luong'] > 0 ? 'bg-success' : 'bg-danger' ?>"><?= (int)$sp['so_luong'] ?> sản phẩm</span></td>
                             <td class="text-center">
                                 <?php if ($orderCount > 0) { ?>
                                     <span class="badge bg-info text-dark" title="Sản phẩm đã xuất hiện trong <?= $orderCount ?> đơn hàng">
