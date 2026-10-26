@@ -23,7 +23,7 @@ $user_tier = $_SESSION['tier'] ?? 'silver';
     <title>BloomShop - Cửa hàng hoa tươi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="<?= $asset_dir ?>/css/style.css" rel="stylesheet">
+    <link href="<?= $asset_dir ?>/css/style.css?v=<?= file_exists(__DIR__ . '/css/style.css') ? filemtime(__DIR__ . '/css/style.css') : '2.1' ?>" rel="stylesheet">
 </head>
 <body>
 <div class="top-bar d-flex justify-content-between px-4 align-items-center flex-wrap">

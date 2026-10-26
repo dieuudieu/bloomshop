@@ -17,13 +17,18 @@ class SanPhamController extends BaseController
     }
 
     /**
-     * Trang chủ: Hiển thị danh sách hoa tươi nổi bật và khuyến mãi
+     * Trang chủ: Hiển thị danh sách hoa tươi nổi bật, banner chuyển động giữa các khối hoa và hoa mới
      */
     public function trangChu()
     {
-        $sanpham = $this->sanPhamModel->getFeaturedProducts(8);
+        $all_featured = $this->sanPhamModel->getFeaturedProducts(8);
+        $hoa_noibat = array_slice($all_featured, 0, 4);
+        $hoa_moive = array_slice($all_featured, 4, 4);
+        $danhmuc = $this->danhMucModel->getAll();
         $this->renderView('trangchu.php', [
-            'sanpham' => $sanpham
+            'hoa_noibat' => $hoa_noibat,
+            'hoa_moive' => $hoa_moive,
+            'danhmuc' => $danhmuc
         ]);
     }
 

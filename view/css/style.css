@@ -331,7 +331,7 @@ a:hover {
     height: 220px;
     padding-top: 25px;
     border-bottom: 2px solid #ddd;
-    min-width: 520px; /* Đảm bảo cột không bị co rúm trên thiết bị nhỏ */
+    min-width: 520px;
 }
 .chart-bar-item {
     flex: 1;
@@ -379,12 +379,309 @@ a:hover {
     border-top: 1px solid var(--bloom-border);
 }
 
+/* 12. BANNER CHUYỂN ĐỘNG TINH GỌN & CHUYÊN NGHIỆP (STUDIO HERO & MIDDLE CAROUSEL) */
+.text-bloom-dark {
+    color: var(--bloom-dark) !important;
+}
+
+/* Khung Hero Banner Tinh Gọn Cao Cấp */
+.hero-banner-section {
+    background-color: var(--bloom-light);
+}
+.hero-card-container {
+    border-radius: 24px;
+    border: 1px solid #ebdcd5;
+    background: #ffffff;
+    box-shadow: 0 12px 35px rgba(168, 119, 104, 0.08);
+}
+.hero-slide-wrapper {
+    min-height: 440px;
+    display: flex;
+    align-items: center;
+}
+.slide-bg-rose {
+    background: linear-gradient(135deg, #fdf8f6 0%, #fbf1ec 60%, #f7e6de 100%);
+}
+.slide-bg-tulip {
+    background: linear-gradient(135deg, #fffdf8 0%, #fff7ea 60%, #fcedd8 100%);
+}
+.slide-bg-mixed {
+    background: linear-gradient(135deg, #fcfafc 0%, #f7f1f7 60%, #eddfee 100%);
+}
+
+.hero-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid #eccbc2;
+    color: var(--bloom-primary);
+    box-shadow: 0 2px 6px rgba(168, 119, 104, 0.08);
+}
+.hero-pill-badge.badge-tulip {
+    border-color: #f7d794;
+    color: #d35400;
+}
+.hero-pill-badge.badge-mixed {
+    border-color: #d1b8dc;
+    color: #6c3483;
+}
+
+.hero-display-title {
+    font-size: clamp(26px, 3.8vw, 42px);
+    font-weight: 800;
+    line-height: 1.22;
+    color: #43322b;
+    margin-bottom: 14px;
+}
+.hero-gradient-text {
+    background: linear-gradient(120deg, #a87768, #c98d8d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.hero-gradient-text-orange {
+    background: linear-gradient(120deg, #d35400, #e67e22);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.hero-gradient-text-purple {
+    background: linear-gradient(120deg, #6c3483, #8e44ad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-lead-desc {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: #6a5a54;
+    margin-bottom: 20px;
+    max-width: 520px;
+}
+.highlight-item {
+    font-size: 13px;
+    font-weight: 600;
+    color: #53433e;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hero-action-btn {
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 13.5px;
+    letter-spacing: 0.3px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 14px rgba(168, 119, 104, 0.22);
+}
+.hero-action-btn:hover {
+    transform: translateY(-2px);
+}
+.hero-outline-btn {
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 13.5px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid #d5c4bc;
+    color: #43322b;
+    transition: all 0.25s ease;
+}
+.hero-outline-btn:hover {
+    background: #ffffff;
+    border-color: #43322b;
+    transform: translateY(-2px);
+}
+
+/* Thẻ hình ảnh hoa nghệ thuật & Floating Glass Tag */
+.hero-media-card {
+    position: relative;
+    display: inline-block;
+    max-width: 440px;
+    width: 100%;
+}
+.hero-banner-photo {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+    border-radius: 18px;
+    box-shadow: 0 14px 32px rgba(80, 45, 35, 0.12);
+}
+.glass-product-tag {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 14px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+.glass-tag-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #faf2ec;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    color: var(--bloom-primary);
+    flex-shrink: 0;
+}
+.glass-tag-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #382924;
+    line-height: 1.2;
+}
+.glass-tag-meta {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+}
+.glass-tag-price {
+    font-weight: 700;
+    color: var(--bloom-primary);
+}
+.glass-tag-rating {
+    color: #7a6a64;
+    font-size: 11.5px;
+}
+
+/* Nút điều hướng Carousel tinh gọn & thanh lịch */
+.hero-carousel-controls {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    padding: 5px 12px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+.hero-arrow-btn {
+    background: transparent;
+    border: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #43322b;
+    font-size: 13px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+.hero-arrow-btn:hover {
+    background: var(--bloom-primary);
+    color: #ffffff;
+}
+.hero-dash-indicators {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.hero-dash-indicators button {
+    width: 20px;
+    height: 4px;
+    border-radius: 2px;
+    background: #d5c4bc;
+    border: none;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+.hero-dash-indicators button.active {
+    width: 38px;
+    background: var(--bloom-primary);
+    opacity: 1;
+}
+
+/* Banner Chuyển Động Giữa Các Hoa (Middle Moving Banner Slider) */
+.middle-promo-slider {
+    border-radius: 20px;
+    border: 1px solid #ebdcd5;
+}
+.middle-slide-box {
+    min-height: 200px;
+}
+.middle-gradient-ruby {
+    background: linear-gradient(135deg, #a8473d 0%, #c46258 50%, #d35400 100%);
+}
+.middle-gradient-violet {
+    background: linear-gradient(135deg, #6c3483 0%, #8e44ad 50%, #d35400 100%);
+}
+.middle-gradient-emerald {
+    background: linear-gradient(135deg, #16a085 0%, #2c3e50 100%);
+}
+.middle-img-card {
+    width: 100%;
+    max-width: 220px;
+    height: 150px;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+.live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff4757;
+    display: inline-block;
+    box-shadow: 0 0 6px #ff4757;
+}
+
 /* ==============================================================
    RESPONSIVE MEDIA QUERIES (TABLET & MOBILE)
 ============================================================== */
 
 /* Màn hình Tablet & Dưới (<= 991px) */
 @media (max-width: 991px) {
+    .hero-slide-wrapper {
+        min-height: auto;
+    }
+    .hero-slide-text {
+        text-align: center;
+    }
+    .hero-highlights {
+        justify-content: center;
+    }
+    .hero-slide-text .d-flex {
+        justify-content: center;
+    }
+    .hero-banner-photo {
+        height: 280px;
+    }
+    .hero-carousel-controls {
+        position: static;
+        transform: none;
+        margin: 15px auto 5px;
+        width: fit-content;
+    }
+    .middle-img-card {
+        max-width: 160px;
+        height: 120px;
+    }
     .header-search-form {
         max-width: 100%;
         margin: 12px 0 !important;
@@ -396,7 +693,7 @@ a:hover {
         padding: 8px 12px;
     }
     .sticky-top {
-        position: static !important; /* Tránh đè che màn hình trên mobile/tablet */
+        position: static !important;
     }
 }
 
@@ -410,8 +707,11 @@ a:hover {
         margin-bottom: 25px;
         text-align: center;
     }
-    .hero-image img {
-        height: 250px;
+    .hero-image img, .hero-slide-img {
+        height: 240px;
+    }
+    .middle-slide-1, .middle-slide-2, .middle-slide-3 {
+        min-height: 180px;
     }
     .tracking-stepper::before {
         display: none;
